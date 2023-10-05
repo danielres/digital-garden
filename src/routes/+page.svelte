@@ -18,8 +18,8 @@
     </div>
   </section>
 
+  <!-- prettier-ignore -->
   <section class="card p-4 col-span-2">
-    <b>HSLuv</b> and <b>OKHsl</b> are perceptually uniform color models, contrary to traditional
-    <b>HSL</b>, which is physically accurate.
+    <b>HSLuv</b> and <b>OKHsl</b> are perceptually uniform color models, contrary to traditional <b>HSL</b>, which is physically accurate.
   </section>
 </div>
