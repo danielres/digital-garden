@@ -2,6 +2,9 @@
   import { superpal } from 'superpal'
   import { derived, writable } from 'svelte/store'
 
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
+
   const baseColor = writable('#60a5fa')
   const sat = writable(0.75)
   const colorSpace = writable<'okhsl' | 'hsl' | 'hsluv'>('hsluv')
@@ -49,7 +52,11 @@
     <div class="grid grid-cols-9">
       {#each Object.entries($palette.values) as [k, v]}
         {#each Object.entries(v) as [intensity, res]}
-          <div class="aspect-square" style="background: {res}" />
+          <button
+            class="aspect-square"
+            style="background: {res}"
+            on:click={() => dispatch('color', res)}
+          />
         {/each}
       {/each}
     </div>
