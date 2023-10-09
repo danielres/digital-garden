@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte'
-  import Superpal from '../Palettes/Superpal.svelte'
-  import { clickOutside } from './clickOutside'
-  import { HSLAdjustment } from './canvas'
-  import { writable } from 'svelte/store'
+  import Superpal from '$lib/components/Palettes/Superpal.svelte'
   import { localStorageStore } from '@skeletonlabs/skeleton'
+  import { onMount, tick } from 'svelte'
+  import { writable } from 'svelte/store'
+  import { HSLAdjustment } from './canvas'
+  import { clickOutside } from './clickOutside'
 
   const WIDTH = 12
   const HEIGHT = 12
