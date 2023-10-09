@@ -7,6 +7,9 @@ dependencies:
   hsluv:
     specifier: ^1.0.1
     version: 1.0.1
+  paper:
+    specifier: ^0.12.17
+    version: 0.12.17
   superpal:
     specifier: ^1.2.31
     version: 1.2.31
@@ -1852,6 +1855,11 @@ packages:
     dependencies:
       p-limit: 3.1.0
     dev: true
+
+  /paper@0.12.17:
+    resolution: {integrity: sha512-oCe+e1C2w8hKIcGoAqUjD0GGxGPv+itrRXlEFUmp3H8tY/NTnHOkYgpJFPGw6OJ8Q1Wa6+RgzlY7Dx/2WWHtkA==}
+    engines: {node: '>=8.0.0'}
+    dev: false
 
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
