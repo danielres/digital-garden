@@ -1,46 +1,66 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, tick } from 'svelte'
   import Superpal from '../Palettes/Superpal.svelte'
   import { clickOutside } from './clickOutside'
   import { HSLAdjustment } from './canvas'
   import { writable } from 'svelte/store'
-
-  let canvas1: HTMLCanvasElement
-  let canvas2: HTMLCanvasElement
-
-  const layer1 = writable({
-    visible: true,
-    name: 'Layer 1',
-  })
-
-  const layer2 = writable({
-    visible: true,
-    name: 'Layer 2',
-  })
-
-  let layerActive = layer1
+  import { localStorageStore } from '@skeletonlabs/skeleton'
 
   const WIDTH = 12
   const HEIGHT = 12
   const PIXEL_SIZE = 40
 
-  let drawing = false
+  const layers = localStorageStore('layers', [
+    { visible: true, name: 'Layer 2', id: 'canvas2', imageData: '' },
+    { visible: true, name: 'Layer 1', id: 'canvas1', imageData: '' },
+  ])
+
+  const layerActiveIdx = writable($layers.length - 1)
 
   let color = '#000000'
+  let drawing = false
 
-  function startDrawing() {
-    drawing = true
+  const startDrawing = () => (drawing = true)
+  const stopDrawing = () => (drawing = false)
+
+  function reset() {
+    $layers = []
+    addLayer()
+    addLayer()
   }
 
-  function stopDrawing() {
-    drawing = false
+  const getActive2DCanvas = () => {
+    const selector = '#' + $layers[$layerActiveIdx].id
+    const canvas = document.querySelector(selector) as HTMLCanvasElement | null
+    if (!canvas) return { canvas: null, ctx: null }
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    return { canvas, ctx }
+  }
+
+  async function addLayer() {
+    const newLayer = {
+      visible: true,
+      name: 'Layer ' + ($layers.length + 1),
+      id: 'canvas' + ($layers.length + 1),
+      imageData: '',
+    }
+    $layers = [newLayer, ...$layers]
+
+    await tick()
+
+    const canvasEl = document.querySelector('#' + newLayer.id) as HTMLCanvasElement | null
+    if (!canvasEl) return
+    canvasEl.width = WIDTH
+    canvasEl.height = HEIGHT
+    canvasEl.width = WIDTH
+    canvasEl.height = HEIGHT
+
+    $layerActiveIdx = 0
   }
 
   function paint(event: MouseEvent) {
     if (!drawing) return
-
-    const canvas = $layerActive.name === 'Layer 1' ? canvas1 : canvas2
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const { canvas, ctx } = getActive2DCanvas()
     if (!ctx) return
 
     const rect = canvas.getBoundingClientRect()
@@ -48,10 +68,21 @@
     const y = Math.floor((event.clientY - rect.top) / PIXEL_SIZE)
     ctx.fillStyle = color
     ctx.fillRect(x, y, 1, 1)
+    saveImageData()
+  }
+
+  function saveImageData() {
+    const { canvas, ctx } = getActive2DCanvas()
+    if (!ctx) return
+
+    const dataUrl = canvas.toDataURL()
+    $layers[$layerActiveIdx].imageData = dataUrl
   }
 
   function draw(event: MouseEvent) {
-    const canvas = $layerActive.name === 'Layer 1' ? canvas1 : canvas2
+    const selector = '#' + $layers[$layerActiveIdx].id
+    const canvas = document.querySelector(selector) as HTMLCanvasElement | null
+    if (!canvas) return
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
     if (!ctx) return
 
@@ -60,43 +91,73 @@
     const y = Math.floor((event.clientY - rect.top) / PIXEL_SIZE)
     ctx.fillStyle = color
     ctx.fillRect(x, y, 1, 1)
+    saveImageData()
   }
 
   function huePlus() {
-    const canvas = $layerActive.name === 'Layer 1' ? canvas1 : canvas2
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const { canvas, ctx } = getActive2DCanvas()
+    if (!canvas) return
     if (!ctx) return
-    const imageData = ctx.getImageData(0, 0, canvas2.width, canvas2.height)
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const adjustedImageData = HSLAdjustment(imageData, 5, 0, 0)
     ctx.putImageData(adjustedImageData, 0, 0)
   }
 
   function hueMinus() {
-    const canvas = $layerActive.name === 'Layer 1' ? canvas1 : canvas2
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const { canvas, ctx } = getActive2DCanvas()
+    if (!canvas) return
     if (!ctx) return
-    const imageData = ctx.getImageData(0, 0, canvas2.width, canvas2.height)
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const adjustedImageData = HSLAdjustment(imageData, -5, 0, 0)
     ctx.putImageData(adjustedImageData, 0, 0)
   }
 
+  function selectCanvasById(id: string) {
+    const selector = '#' + id
+    const canvas = document.querySelector(selector) as HTMLCanvasElement | null
+    return canvas
+  }
+
+  function restoreLayers() {
+    $layers.forEach((layer) => {
+      const canvas = selectCanvasById(layer.id)
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      const img = new Image()
+      img.src = layer.imageData
+      img.onload = () => ctx.drawImage(img, 0, 0)
+    })
+  }
+
+  function initCanvasDimensions() {
+    $layers.forEach(({ id }) => {
+      const canvasEl = document.querySelector('#' + id) as HTMLCanvasElement | null
+      if (!canvasEl) return
+      canvasEl.width = WIDTH
+      canvasEl.height = HEIGHT
+      canvasEl.width = WIDTH
+      canvasEl.height = HEIGHT
+    })
+  }
+
   onMount(() => {
-    canvas1.width = WIDTH
-    canvas1.height = HEIGHT
-    canvas2.width = WIDTH
-    canvas2.height = HEIGHT
+    initCanvasDimensions()
 
-    // var canvas2 = document.createElement('canvas')
-    // var ctx2 = canvas.getContext('2d') as CanvasRenderingContext2D
-    // ctx2.fillStyle = 'blue'
-    // ctx2.fillRect(0, 0, 4, 4)
-
-    // ctx.drawImage(canvas2, 0, 0, 200, 200)
+    restoreLayers()
   })
 </script>
 
 <div class="flex gap-4 h-full">
   <aside class="card p-4 space-y-4">
+    <div>
+      <button on:click={reset} class="btn variant-soft rounded btn-sm">Reset</button>
+    </div>
+
+    <hr />
+
     <Superpal on:color={(c) => (color = c.detail)} />
 
     <hr />
@@ -112,52 +173,50 @@
     <hr />
 
     <section
-      class="grid grid-cols-[1fr_auto_auto] gap-x-4 font-semibold text-surface-500 items-center"
+      class="grid grid-cols-[1fr_auto_auto_auto] gap-x-2 font-semibold text-surface-500 items-center gap-y-2"
     >
       <div class="contents">
-        <input
-          class="p-0 bg-transparent border-none hover:text-surface-300 transition-colors"
-          type="text"
-          bind:value={$layer2.name}
-        />
-        <input class="radio" type="radio" bind:group={layerActive} value={layer2} />
-        <input class="checkbox" type="checkbox" bind:checked={$layer2.visible} />
-      </div>
-      <div class="contents">
-        <input
-          class="p-0 bg-transparent border-none hover:text-surface-300 transition-colors"
-          type="text"
-          bind:value={$layer1.name}
-        />
-        <input class="radio" type="radio" bind:group={layerActive} value={layer1} />
-        <input class="checkbox" type="checkbox" bind:checked={$layer1.visible} />
+        {#each $layers as layer, i}
+          <div class="contents">
+            <input
+              class="p-0 bg-transparent border-none hover:text-surface-300 transition-colors"
+              type="text"
+              bind:value={layer.name}
+            />
+            <input class="radio" type="radio" bind:group={$layerActiveIdx} value={i} />
+            <input class="checkbox" type="checkbox" bind:checked={layer.visible} />
+            <button
+              class="btn-sm variant-soft rounded w-6 aspect-square text-center p-0"
+              on:click={() => {
+                confirm('Are you sure you want to delete this layer?')
+                $layers.splice(i, 1)
+                $layers = $layers
+              }}
+            >
+              -
+            </button>
+          </div>
+        {/each}
+        <button on:click={addLayer}>Add layer</button>
       </div>
     </section>
   </aside>
 
   <div class="stack">
-    <canvas
-      class:hidden={!$layer1.visible}
-      bind:this={canvas1}
-      style="width:{WIDTH * PIXEL_SIZE}px; height:{HEIGHT * PIXEL_SIZE}px;"
-      use:clickOutside={stopDrawing}
-      on:mousedown={startDrawing}
-      on:mouseup={stopDrawing}
-      on:mousemove={(e) => paint(e)}
-      on:click={(e) => draw(e)}
-    />
-
-    <canvas
-      class:hidden={!$layer2.visible}
-      bind:this={canvas2}
-      style="width:{WIDTH * PIXEL_SIZE}px; height:{HEIGHT * PIXEL_SIZE}px;"
-      use:clickOutside={stopDrawing}
-      on:mousedown={startDrawing}
-      on:mouseup={stopDrawing}
-      on:mousemove={(e) => paint(e)}
-      on:click={(e) => draw(e)}
-    />
+    {#each [...$layers].reverse() as layer}
+      <canvas
+        id={layer.id}
+        class:hidden={!layer.visible}
+        style="width:{WIDTH * PIXEL_SIZE}px; height:{HEIGHT * PIXEL_SIZE}px;"
+        use:clickOutside={stopDrawing}
+        on:mousedown={startDrawing}
+        on:mouseup={stopDrawing}
+        on:mousemove={(e) => paint(e)}
+        on:click={(e) => draw(e)}
+      />
+    {/each}
   </div>
+  <pre>{JSON.stringify($layers, null, 1)}</pre>
 </div>
 
 <style lang="postcss">
