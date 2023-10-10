@@ -52,8 +52,6 @@
     if (!canvasEl) return
     canvasEl.width = WIDTH
     canvasEl.height = HEIGHT
-    canvasEl.width = WIDTH
-    canvasEl.height = HEIGHT
 
     $layerActiveIdx = 0
   }
@@ -172,32 +170,36 @@
 
     <hr />
 
-    <section
-      class="grid grid-cols-[1fr_auto_auto_auto] gap-x-2 font-semibold text-surface-500 items-center gap-y-2"
-    >
-      <div class="contents">
-        {#each $layers as layer, i}
-          <div class="contents">
-            <input
-              class="p-0 bg-transparent border-none hover:text-surface-300 transition-colors"
-              type="text"
-              bind:value={layer.name}
-            />
-            <input class="radio" type="radio" bind:group={$layerActiveIdx} value={i} />
-            <input class="checkbox" type="checkbox" bind:checked={layer.visible} />
-            <button
-              class="btn-sm variant-soft rounded w-6 aspect-square text-center p-0"
-              on:click={() => {
-                confirm('Are you sure you want to delete this layer?')
-                $layers.splice(i, 1)
-                $layers = $layers
-              }}
-            >
-              -
-            </button>
-          </div>
-        {/each}
-        <button on:click={addLayer}>Add layer</button>
+    <section class="text-surface-500 font-semibold space-y-2">
+      <div class="flex justify-end">
+        <button class="btn btn-sm variant-soft !text-surface-500 rounded" on:click={addLayer}>
+          Add layer
+        </button>
+      </div>
+      <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center">
+        <div class="contents">
+          {#each $layers as layer, i}
+            <div class="contents">
+              <input
+                class="p-0 bg-transparent border-none hover:text-surface-300 transition-colors"
+                type="text"
+                bind:value={layer.name}
+              />
+              <input class="radio" type="radio" bind:group={$layerActiveIdx} value={i} />
+              <input class="checkbox" type="checkbox" bind:checked={layer.visible} />
+              <button
+                class="btn-sm variant-soft rounded w-6 aspect-square text-center p-0"
+                on:click={() => {
+                  confirm('Are you sure you want to delete this layer?')
+                  $layers.splice(i, 1)
+                  $layers = $layers
+                }}
+              >
+                -
+              </button>
+            </div>
+          {/each}
+        </div>
       </div>
     </section>
   </aside>
