@@ -41,6 +41,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.5.3",
+    "acorn": "^8.10.0",
     "hsluv": "^1.0.1",
     "paper": "^0.12.17",
     "superpal": "^1.2.31"
