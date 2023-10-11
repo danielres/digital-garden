@@ -15,6 +15,22 @@
     { visible: true, name: 'Layer 1', id: 'canvas1', imageData: '' },
   ])
 
+  let mergedCanvas: HTMLCanvasElement | null
+
+  async function updateMergedCanvas(layers = $layers) {
+    await tick()
+    if (!mergedCanvas) return
+    const ctx = mergedCanvas.getContext('2d')
+    if (!ctx) return
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    ;[...layers].reverse().forEach(({ imageData, visible }) => {
+      if (!visible) return
+      const img = new Image()
+      img.src = imageData
+      img.onload = () => ctx.drawImage(img, 0, 0)
+    })
+  }
+
   const layerActiveIdx = writable($layers.length - 1)
 
   let color = '#000000'
@@ -27,6 +43,7 @@
     $layers = []
     addLayer()
     addLayer()
+    updateMergedCanvas()
   }
 
   const getActive2DCanvas = () => {
@@ -90,6 +107,7 @@
     ctx.fillStyle = color
     ctx.fillRect(x, y, 1, 1)
     saveImageData()
+    updateMergedCanvas()
   }
 
   function huePlus() {
@@ -136,15 +154,13 @@
       if (!canvasEl) return
       canvasEl.width = WIDTH
       canvasEl.height = HEIGHT
-      canvasEl.width = WIDTH
-      canvasEl.height = HEIGHT
     })
   }
 
   onMount(() => {
     initCanvasDimensions()
-
     restoreLayers()
+    updateMergedCanvas()
   })
 </script>
 
@@ -186,7 +202,12 @@
                 bind:value={layer.name}
               />
               <input class="radio" type="radio" bind:group={$layerActiveIdx} value={i} />
-              <input class="checkbox" type="checkbox" bind:checked={layer.visible} />
+              <input
+                class="checkbox"
+                type="checkbox"
+                bind:checked={layer.visible}
+                on:click={() => setTimeout(updateMergedCanvas, 0)}
+              />
               <button
                 class="btn-sm variant-soft rounded w-6 aspect-square text-center p-0"
                 on:click={() => {
@@ -209,7 +230,8 @@
       <canvas
         id={layer.id}
         class:hidden={!layer.visible}
-        style="width:{WIDTH * PIXEL_SIZE}px; height:{HEIGHT * PIXEL_SIZE}px;"
+        style:width="{WIDTH * PIXEL_SIZE}px"
+        style:height="{HEIGHT * PIXEL_SIZE}px"
         use:clickOutside={stopDrawing}
         on:mousedown={startDrawing}
         on:mouseup={stopDrawing}
@@ -218,6 +240,17 @@
       />
     {/each}
   </div>
+
+  <div>
+    <canvas
+      bind:this={mergedCanvas}
+      style:width="400px"
+      style:height="400px"
+      width={WIDTH}
+      height={HEIGHT}
+    />
+  </div>
+
   <pre>{JSON.stringify($layers, null, 1)}</pre>
 </div>
 
