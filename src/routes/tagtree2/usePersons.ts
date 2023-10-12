@@ -16,7 +16,7 @@ export function setPersonsContext(persons: Person[], traits: Trait[]) {
   const traitsStore = {
     ...writable(traits),
 
-    remove(kind: string, personId: string, nodeId: string) {
+    remove({ kind, personId, nodeId }: Pick<Trait, 'kind' | 'personId' | 'nodeId'>) {
       traitsStore.update((traits) =>
         traits.filter((t) => !(t.kind === kind && t.personId === personId && t.nodeId === nodeId))
       )

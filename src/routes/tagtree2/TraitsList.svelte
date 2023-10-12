@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Ratings } from '@skeletonlabs/skeleton'
   import * as Icons from './Icons'
-  import { getPersonsContext, type Person } from './usePersons'
+  import { getPersonsContext, type Person, type Trait } from './usePersons'
 
-  const { persons, traits } = getPersonsContext()
+  const { traits } = getPersonsContext()
   export let person: Person
-  export let traitsKind: 'interest' | 'expertise'
+  export let traitsKind: Trait['kind']
 </script>
 
 {#each $traits.filter((t) => t.personId === person.id && t.kind === traitsKind) as trait}
@@ -32,7 +32,7 @@
           class="opacity-25 hover:opacity-100"
           on:click={() =>
             confirm(`Are you sure you want to remove this ${traitsKind} for ${person.name}?`) &&
-            traits.remove(trait.kind, trait.personId, trait.nodeId)}
+            traits.remove(trait)}
         >
           <Icons.Xmark />
         </button>
