@@ -21,6 +21,20 @@ export function setPersonsContext(persons: Person[], traits: Trait[]) {
         traits.filter((t) => !(t.kind === kind && t.personId === personId && t.nodeId === nodeId))
       )
     },
+
+    updateScale(
+      { kind, personId, nodeId }: Pick<Trait, 'kind' | 'personId' | 'nodeId'>,
+      scale: number
+    ) {
+      traitsStore.update((traits) =>
+        traits.map((t) => {
+          if (t.kind === kind && t.personId === personId && t.nodeId === nodeId) {
+            return { ...t, scale }
+          }
+          return t
+        })
+      )
+    },
   }
 
   return setContext('persons', {
