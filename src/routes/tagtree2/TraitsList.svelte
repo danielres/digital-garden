@@ -32,14 +32,7 @@
           class="opacity-25 hover:opacity-100"
           on:click={() =>
             confirm(`Are you sure you want to remove this ${traitsKind} for ${person.name}?`) &&
-            ($traits = $traits.filter(
-              (t) =>
-                !(
-                  t.kind === traitsKind &&
-                  t.nodeId === trait.nodeId &&
-                  t.personId === trait.personId
-                )
-            ))}
+            traits.remove(trait.kind, trait.personId, trait.nodeId)}
         >
           <Icons.Xmark />
         </button>

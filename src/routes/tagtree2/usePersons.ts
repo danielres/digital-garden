@@ -12,7 +12,16 @@ export type Trait = {
 
 export function setPersonsContext(persons: Person[], traits: Trait[]) {
   const personsStore = writable(persons)
-  const traitsStore = writable(traits)
+
+  const traitsStore = {
+    ...writable(traits),
+
+    remove(kind: string, personId: string, nodeId: string) {
+      traitsStore.update((traits) =>
+        traits.filter((t) => !(t.kind === kind && t.personId === personId && t.nodeId === nodeId))
+      )
+    },
+  }
 
   return setContext('persons', {
     persons: personsStore,
