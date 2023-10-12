@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { getTreeContext, type Edge } from './useTree'
-  import { onlyUnique, onlyUniqueObjects } from './utils/array'
+  import { createEventDispatcher } from 'svelte'
+  import { getTreeContext } from './useTree'
+  import { onlyUniqueObjects } from './utils/array'
 
   export let depth = 0
   export let nodeId = 'root'
@@ -32,13 +33,17 @@
       .flat()
       .filter(onlyUniqueObjects)
   }
+
+  const dispatch = createEventDispatcher()
 </script>
 
 {#if depth === 0}
   <ul>
-    <svelte:self nodeId={'root'} depth={depth + 1} />
+    <svelte:self on:nodeClicked nodeId={'root'} depth={depth + 1} />
   </ul>
 {:else}
+  {@const nodeValue = $nodes.find((n) => n.id === nodeId)?.value}
+
   <li
     data-parent-id={parentId}
     data-id={nodeId}
@@ -47,12 +52,23 @@
     on:dragstart|self={onDragStart}
     draggable={depth > 1}
   >
-    {$nodes.find((n) => n.id === nodeId)?.value}
+    {#if nodeId === 'root'}
+      {nodeValue}
+    {:else}
+      <button on:click={() => dispatch('nodeClicked', { nodeId, parentId })}>
+        {nodeValue}
+      </button>
+    {/if}
 
     {#if depth <= maxDepth && $edges.some((e) => e.parentId === nodeId)}
       <ul>
         {#each $edges.filter((e) => e.parentId === nodeId) as edge}
-          <svelte:self nodeId={edge.childId} depth={depth + 1} parentId={edge.parentId} />
+          <svelte:self
+            on:nodeClicked
+            nodeId={edge.childId}
+            depth={depth + 1}
+            parentId={edge.parentId}
+          />
         {/each}
       </ul>
     {/if}
@@ -64,6 +80,6 @@
     @apply ml-2;
   }
   li {
-    @apply cursor-pointer select-none;
+    @apply select-none;
   }
 </style>
