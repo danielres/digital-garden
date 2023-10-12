@@ -12,8 +12,8 @@
   <Tab bind:group={tabSet} name="tab1" value={1} on:click={() => goto('/palettes')}>Palettes</Tab>
   <Tab bind:group={tabSet} name="tab2" value={2} on:click={() => goto('/draw')}>Draw</Tab>
   <Tab bind:group={tabSet} name="tab2" value={3} on:click={() => goto('/paperjs')}>Paper.js</Tab>
-  <Tab bind:group={tabSet} name="tab2" value={3} on:click={() => goto('/tagtree')}>Tagtree</Tab>
-  <Tab bind:group={tabSet} name="tab2" value={3} on:click={() => goto('/tagtree2')}>Tagtree2</Tab>
+  <Tab bind:group={tabSet} name="tab2" value={4} on:click={() => goto('/tagtree')}>Tagtree</Tab>
+  <Tab bind:group={tabSet} name="tab2" value={5} on:click={() => goto('/tagtree2')}>Tagtree2</Tab>
 </TabGroup>
 
 <slot />
