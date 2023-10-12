@@ -27,7 +27,7 @@
   </div>
 
   <div>
-    <h2>Traits</h2>
+    <h2>Topics</h2>
     <div class="space-y-4 variant-soft p-4">
       <div class="flex gap-4">
         <label>

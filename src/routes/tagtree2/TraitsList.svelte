@@ -19,7 +19,7 @@
 </script>
 
 <div class="grid" style:--colsCount={colsCount}>
-  <div class="th">Node</div>
+  <div class="th">Topic</div>
   {#each traitsKind as kind}
     <div class="th">{upperFirst(kind)}</div>
   {/each}
