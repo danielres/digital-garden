@@ -17,11 +17,11 @@
   ]
 
   setPersonsContext(initPersons, initTraits)
-  const { persons, traits } = getPersonsContext()
+  const { persons } = getPersonsContext()
 </script>
 
 <div class="flex flex-wrap">
-  {#each [...$persons, ...$persons, ...$persons] as person}
+  {#each $persons as person}
     <div class="min-w-[50%] flex-grow p-2">
       <h2>{person.name}</h2>
 
