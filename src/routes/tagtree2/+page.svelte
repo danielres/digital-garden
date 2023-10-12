@@ -1,28 +1,19 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import Tree from './Tree.svelte'
-  import Persons from './Persons.svelte'
-  import { getTreeContext, setTreeContext, type Edge, type Node } from './useTree'
-  import NodeView from './NodeView.svelte'
   import * as Icons from './Icons'
+  import NodeView from './NodeView.svelte'
+  import Persons from './Persons.svelte'
+  import Tree from './Tree.svelte'
+  import * as data from './data'
+  import { setPersonsContext } from './usePersons'
+  import { getTreeContext, setTreeContext } from './useTree'
 
-  const initNodes: Node[] = [
-    { value: 'root', id: 'root', body: '' },
-    { value: 'node1', id: '01', body: 'Node1 body' },
-    { value: 'node2 Lorem', id: '02', body: 'Node2 body' },
-    { value: 'node3', id: '03', body: 'Node3 body' },
-  ]
+  setPersonsContext(data.persons, data.traits)
 
-  const initEdges: Edge[] = [
-    { parentId: 'root', childId: '01' },
-    { parentId: 'root', childId: '02' },
-    { parentId: '02', childId: '03' },
-  ]
-
-  setTreeContext(initNodes, initEdges)
+  setTreeContext(data.nodes, data.edges)
   const { dragAction, nodes } = getTreeContext()
 
-  let currentNodeId: string | undefined = '01'
+  let currentNodeId: string | undefined = undefined
   $: currentNode = $nodes.find((n) => n.id === currentNodeId)
 
   function viewNode({ nodeId }: { nodeId: string; parentId: string }) {
@@ -30,24 +21,30 @@
   }
 </script>
 
-<div class="m-4 flex gap-4">
-  <label>
-    <input class="radio" type="radio" bind:group={$dragAction} value="move" />
-    <span>Move</span>
-  </label>
+<div class="grid grid-cols-2 max-w-7xl mx-auto gap-8 my-8">
+  <div class="">
+    <Persons />
+  </div>
 
-  <label>
-    <input class="radio" type="radio" bind:group={$dragAction} value="copy" />
-    <span>Copy</span>
-  </label>
-</div>
+  <div>
+    <h2>Traits</h2>
+    <div class="space-y-4 variant-soft p-4">
+      <div class="flex gap-4">
+        <label>
+          <input class="radio" type="radio" bind:group={$dragAction} value="move" />
+          <span>Move</span>
+        </label>
+        <label>
+          <input class="radio" type="radio" bind:group={$dragAction} value="copy" />
+          <span>Copy</span>
+        </label>
+      </div>
 
-<div class="space-y-4 p-4">
-  <Tree on:nodeClicked={({ detail }) => viewNode(detail)} />
-
-  <hr />
-
-  <Persons />
+      <div class="">
+        <Tree on:nodeClicked={({ detail }) => viewNode(detail)} />
+      </div>
+    </div>
+  </div>
 </div>
 
 {#if currentNode}
