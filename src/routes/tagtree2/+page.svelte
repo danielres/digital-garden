@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import Tree from './Tree.svelte'
+  import Persons from './Persons.svelte'
   import { getTreeContext, setTreeContext, type Edge, type Node } from './useTree'
 
   const nodes: Node[] = [
@@ -59,4 +60,10 @@
   </div>
 {/if}
 
-<Tree on:nodeClicked={({ detail }) => viewNode(detail)} />
+<div class="space-y-4 p-4">
+  <Tree on:nodeClicked={({ detail }) => viewNode(detail)} />
+
+  <hr />
+
+  <Persons />
+</div>
