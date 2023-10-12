@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getTreeContext } from './useTree'
+  import { getTreeContext, type Edge } from './useTree'
   import { onlyUnique, onlyUniqueObjects } from './utils/array'
 
   export let depth = 0
@@ -7,7 +7,7 @@
   export let parentId = 'root'
 
   const context = getTreeContext()
-  const { nodes, edges, maxDepth, dragAction } = context
+  const { nodes, edges, maxDepth, dragAction, getDescendants } = context
 
   type DragEventCustom = DragEvent & {
     currentTarget: EventTarget & HTMLLIElement
@@ -20,7 +20,7 @@
   function onDrop(e: DragEventCustom, targetId: string) {
     const source = JSON.parse(e.dataTransfer?.getData('text/plain') as string)
 
-    if (getDescendants(source.id).includes(targetId)) return // can't drop on descendant
+    if (getDescendants(source.id, $edges).includes(targetId)) return // can't drop on descendant
 
     $edges = $edges
       .map((edge) => {
@@ -31,13 +31,6 @@
       })
       .flat()
       .filter(onlyUniqueObjects)
-
-    function getDescendants(nodeId: string): string[] {
-      const children = $edges.filter((e) => e.parentId === nodeId)
-      const childrenIds = children.map((e) => e.childId)
-      const childrenDescendants = childrenIds.flatMap(getDescendants)
-      return [...childrenIds, ...childrenDescendants].filter(onlyUnique)
-    }
   }
 </script>
 
@@ -68,7 +61,7 @@
 
 <style lang="postcss">
   ul {
-    @apply border m-2 px-2 py-1;
+    @apply ml-2;
   }
   li {
     @apply cursor-pointer select-none;
