@@ -8,7 +8,13 @@ export type Edge = { parentId: string; childId: string }
 type DragAction = 'move' | 'copy'
 
 export function setTreeContext(nodes: Node[], edges: Edge[], maxDepth = 5) {
-  const nodesStore = writable(nodes)
+  const nodesStore = {
+    ...writable(nodes),
+
+    findById(id: Node['id']) {
+      return nodes.find((n) => n.id === id) ?? { value: id, id, body: '' }
+    },
+  }
   const edgesStore = writable(edges)
   const dragAction = writable<DragAction>('move')
 
