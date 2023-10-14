@@ -5,7 +5,7 @@
   import Persons from './Persons.svelte'
   import Rating from './Rating.svelte'
   import Tree from './Tree.svelte'
-  import { getPersonsContext, setPersonsContext, type Trait } from './usePersons'
+  import { getPersonsContext, setPersonsContext, type Person, type Trait } from './usePersons'
   import { getTreeContext, setTreeContext } from './useTree'
   import { upperFirst } from './utils/string'
 
@@ -27,9 +27,12 @@
     { kind: 'expertise', personId: 'tom', nodeId: '02', body: 'pro 02', scale: 5 },
   ]
 
+  let currentPerson: Person | undefined = undefined
+
   function closeAllPanels() {
     currentNodeId = undefined
     currentTraits = []
+    currentPerson = undefined
   }
 
   const { traits, persons } = getPersonsContext()
@@ -38,6 +41,10 @@
 <div class="grid grid-cols-2 max-w-7xl mx-auto gap-8 my-8">
   <div class="">
     <Persons
+      on:personClicked={({ detail }) => {
+        closeAllPanels()
+        currentPerson = detail
+      }}
       on:personNodeClicked={({ detail }) => {
         closeAllPanels()
         const { nodeId, personId } = detail
@@ -79,7 +86,25 @@
       currentNodeId = undefined
     }}
   >
-    <NodeView node={currentNode} />
+    <NodeView
+      on:personClicked={({ detail }) => {
+        closeAllPanels()
+        currentPerson = detail
+      }}
+      node={currentNode}
+    />
+  </Panel>
+{/if}
+
+{#if currentPerson}
+  <Panel
+    on:close={() => {
+      closeAllPanels()
+      currentNodeId = undefined
+    }}
+  >
+    <h2>{currentPerson.name}</h2>
+    <div>{JSON.stringify(currentPerson)}</div>
   </Panel>
 {/if}
 

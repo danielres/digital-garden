@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import Rating from './Rating.svelte'
   import { getPersonsContext } from './usePersons'
   import type { Node } from './useTree'
@@ -14,6 +15,8 @@
     $traits.filter((t) => t.nodeId === node.id),
     'personId'
   )
+
+  const dispatch = createEventDispatcher()
 </script>
 
 <div class="space-y-4">
@@ -21,13 +24,19 @@
   <div class="opacity-75 text-sm">{node.body}</div>
 
   {#each Object.entries(details) as [personId, traits]}
-    <div class="">
-      <h2 class="">{upperFirst(persons.findById(personId).name)}</h2>
+    {@const person = persons.findById(personId)}
+
+    <div>
+      <h2>
+        <button on:click={() => dispatch('personClicked', person)}>
+          {upperFirst(person.name)}
+        </button>
+      </h2>
       <div class=" variant-ghost p-4">
         {#each traits as trait}
           <div>
             <div class="grid grid-cols-2 items-center gap-2">
-              <div class="">{upperFirst(trait.kind)}:</div>
+              <div>{upperFirst(trait.kind)}:</div>
               <Rating {trait} interactive={false} />
             </div>
 
