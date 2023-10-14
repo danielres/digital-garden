@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
-  import * as Icons from './Icons'
-  import NodeView from './NodeView.svelte'
-  import Persons from './Persons.svelte'
-  import Tree from './Tree.svelte'
   import * as data from './data'
+  import NodeView from './NodeView.svelte'
+  import Panel from './Panel.svelte'
+  import Persons from './Persons.svelte'
+  import Rating from './Rating.svelte'
+  import Tree from './Tree.svelte'
   import { getPersonsContext, setPersonsContext, type Trait } from './usePersons'
   import { getTreeContext, setTreeContext } from './useTree'
+  import { upperFirst } from './utils/string'
 
   setPersonsContext(data.persons, data.traits)
 
@@ -26,6 +27,11 @@
     { kind: 'expertise', personId: 'tom', nodeId: '02', body: 'pro 02', scale: 5 },
   ]
 
+  function closeAllPanels() {
+    currentNodeId = undefined
+    currentTraits = []
+  }
+
   const { traits, persons } = getPersonsContext()
 </script>
 
@@ -33,6 +39,7 @@
   <div class="">
     <Persons
       on:personNodeClicked={({ detail }) => {
+        closeAllPanels()
         const { nodeId, personId } = detail
         currentTraits = $traits.filter((t) => t.nodeId === nodeId && t.personId === personId)
       }}
@@ -54,51 +61,56 @@
       </div>
 
       <div class="">
-        <Tree on:nodeClicked={({ detail }) => viewNode(detail)} />
+        <Tree
+          on:nodeClicked={({ detail }) => {
+            closeAllPanels()
+            viewNode(detail)
+          }}
+        />
       </div>
     </div>
   </div>
 </div>
 
 {#if currentNode}
-  <div
-    class="stack fixed inset-8 md:inset-x-auto md:right-8 md:w-full md:max-w-md variant-ghost backdrop-blur"
-    transition:fade={{ duration: 100 }}
+  <Panel
+    on:close={() => {
+      closeAllPanels()
+      currentNodeId = undefined
+    }}
   >
     <NodeView node={currentNode} />
-
-    <button
-      class="justify-self-end self-start p-2 text-3xl opacity-30 hover:opacity-80"
-      on:click={() => (currentNodeId = undefined)}
-    >
-      <Icons.Xmark />
-    </button>
-  </div>
+  </Panel>
 {/if}
 
 {#if currentTraits.length}
   {@const personId = currentTraits[0].personId}
   {@const person = persons.findById(personId)}
-  <div
-    class="stack fixed inset-8 md:inset-x-auto md:right-8 md:w-full md:max-w-md variant-ghost backdrop-blur"
-    transition:fade={{ duration: 100 }}
-  >
-    <div class="p-4">
-      <h2>
-        <div class="text-lg">
-          Person: {person?.name ?? `Person with id ${personId} not found`}
-        </div>
+  {@const node = nodes.findById(currentTraits[0].nodeId)}
 
-        <div class="text-lg">Topic: {nodes.findById(currentTraits[0].nodeId).value}</div>
-      </h2>
-      <pre>{JSON.stringify(currentTraits, null, 2)}</pre>
+  <Panel
+    on:close={() => {
+      closeAllPanels()
+      currentTraits = []
+    }}
+  >
+    <div class="">
+      <h2 class="text-lg">{upperFirst(node.value)}</h2>
+      <p class="text-sm">{node.body}</p>
     </div>
 
-    <button
-      class="justify-self-end self-start p-2 text-3xl opacity-30 hover:opacity-80"
-      on:click={() => (currentTraits = [])}
-    >
-      <Icons.Xmark />
-    </button>
-  </div>
+    <div class="space-y-2">
+      <h2>{person?.name ?? `Person with id ${personId} not found`}</h2>
+
+      {#each currentTraits as trait}
+        <div class="variant-ghost p-4">
+          <div class="flex justify-end items-center gap-2">
+            <div class="">{upperFirst(trait.kind)}:</div>
+            <Rating {trait} interactive={false} />
+          </div>
+          <p class="">{trait.body}</p>
+        </div>
+      {/each}
+    </div>
+  </Panel>
 {/if}
