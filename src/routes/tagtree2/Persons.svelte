@@ -11,7 +11,7 @@
       <h2>{person.name}</h2>
 
       <div class="variant-soft rounded">
-        <TraitsList {person} />
+        <TraitsList {person} on:personNodeClicked />
       </div>
     </div>
   {/each}

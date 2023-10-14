@@ -5,7 +5,7 @@
   import Persons from './Persons.svelte'
   import Tree from './Tree.svelte'
   import * as data from './data'
-  import { setPersonsContext } from './usePersons'
+  import { getPersonsContext, setPersonsContext, type Trait } from './usePersons'
   import { getTreeContext, setTreeContext } from './useTree'
 
   setPersonsContext(data.persons, data.traits)
@@ -19,11 +19,24 @@
   function viewNode({ nodeId }: { nodeId: string; parentId: string }) {
     currentNodeId = nodeId
   }
+
+  // prettier-ignore
+  let currentTraits: Trait[] = [
+    { kind: 'interest', personId: 'tom', nodeId: '02', body: '02 is meh', scale: 3.5 },
+    { kind: 'expertise', personId: 'tom', nodeId: '02', body: 'pro 02', scale: 5 },
+  ]
+
+  const { traits, persons } = getPersonsContext()
 </script>
 
 <div class="grid grid-cols-2 max-w-7xl mx-auto gap-8 my-8">
   <div class="">
-    <Persons />
+    <Persons
+      on:personNodeClicked={({ detail }) => {
+        const { nodeId, personId } = detail
+        currentTraits = $traits.filter((t) => t.nodeId === nodeId && t.personId === personId)
+      }}
+    />
   </div>
 
   <div>
@@ -57,6 +70,33 @@
     <button
       class="justify-self-end self-start p-2 text-3xl opacity-30 hover:opacity-80"
       on:click={() => (currentNodeId = undefined)}
+    >
+      <Icons.Xmark />
+    </button>
+  </div>
+{/if}
+
+{#if currentTraits.length}
+  {@const personId = currentTraits[0].personId}
+  {@const person = persons.findById(personId)}
+  <div
+    class="stack fixed inset-8 md:inset-x-auto md:right-8 md:w-full md:max-w-md variant-ghost backdrop-blur"
+    transition:fade={{ duration: 100 }}
+  >
+    <div class="p-4">
+      <h2>
+        <div class="text-lg">
+          Person: {person?.name ?? `Person with id ${personId} not found`}
+        </div>
+
+        <div class="text-lg">Topic: {nodes.findById(currentTraits[0].nodeId).value}</div>
+      </h2>
+      <pre>{JSON.stringify(currentTraits, null, 2)}</pre>
+    </div>
+
+    <button
+      class="justify-self-end self-start p-2 text-3xl opacity-30 hover:opacity-80"
+      on:click={() => (currentTraits = [])}
     >
       <Icons.Xmark />
     </button>
