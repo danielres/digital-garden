@@ -1,7 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
+
   import { getTreeContext } from './useTree'
   import { onlyUniqueObjects } from './utils/array'
+  import * as Icons from './Icons'
 
   export let depth = 0
   export let nodeId = 'root'
@@ -53,15 +55,19 @@
     draggable={depth > 1}
   >
     {#if nodeId === 'root'}
-      {nodeValue}
+      <span class="root opacity-75 text-sm">[Root]</span>
     {:else}
-      <button on:click={() => dispatch('nodeClicked', { nodeId, parentId })}>
+      <button
+        on:click={() => dispatch('nodeClicked', { nodeId, parentId })}
+        class="flex items-center gap-1"
+      >
+        <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
         {nodeValue}
       </button>
     {/if}
 
     {#if depth <= maxDepth && $edges.some((e) => e.parentId === nodeId)}
-      <ul>
+      <ul class="ml-4">
         {#each $edges.filter((e) => e.parentId === nodeId) as edge}
           <svelte:self
             on:nodeClicked
@@ -76,10 +82,10 @@
 {/if}
 
 <style lang="postcss">
-  ul {
-    @apply ml-2;
-  }
   li {
     @apply select-none;
+  }
+  .root {
+    font-variant: small-caps;
   }
 </style>
