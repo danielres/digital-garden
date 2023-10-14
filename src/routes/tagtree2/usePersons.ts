@@ -11,7 +11,13 @@ export type Trait = {
 }
 
 export function setPersonsContext(persons: Person[], traits: Trait[]) {
-  const personsStore = writable(persons)
+  const personsStore = {
+    ...writable(persons),
+
+    findById(id: Person['id']) {
+      return persons.find((p) => p.id === id)
+    },
+  }
 
   const traitsStore = {
     ...writable(traits),
