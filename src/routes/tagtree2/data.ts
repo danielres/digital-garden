@@ -1,12 +1,13 @@
+import type { Person, Trait } from './usePersons'
 import type { Edge, Node } from './useTree'
 
-export const persons = [
-  { id: 'tom', name: 'Tom' },
-  { id: 'jill', name: 'Jill' },
-  { id: 'paul', name: 'Paul' },
+export const persons: Person[] = [
+  { id: 'tom', name: 'Tom', body: 'I am a person and I love cats.' },
+  { id: 'jill', name: 'Jill', body: 'I am a person and I love dogs.' },
+  { id: 'paul', name: 'Paul', body: 'I am a person and I love hamsters.' },
 ]
 
-export const traits = [
+export const traits: Trait[] = [
   { kind: 'hobby', personId: 'jill', nodeId: '02', body: 'hobby 02', scale: 4 },
   { kind: 'interest', personId: 'tom', nodeId: '01', body: '01 is great', scale: 5 },
   { kind: 'interest', personId: 'tom', nodeId: '02', body: '02 is meh', scale: 3.5 },

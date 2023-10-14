@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte'
 import { writable } from 'svelte/store'
 
-export type Person = { id: string; name: string }
+export type Person = { id: string; name: string; body: string }
 export type Trait = {
   kind: string
   personId: string
