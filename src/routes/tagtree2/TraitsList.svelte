@@ -29,7 +29,7 @@
   {#each traitNodeIds as nodeId}
     <div>
       <button
-        class="underline decoration-dotted decoration-surface-500 underline-offset-4 opacity-90 hover:opacity-100"
+        class="clickable opacity-90 hover:opacity-100"
         on:click={() => dispatch('personNodeClicked', { nodeId, personId: person.id })}
       >
         {nodes.findById(nodeId).value}

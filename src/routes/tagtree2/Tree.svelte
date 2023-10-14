@@ -59,7 +59,7 @@
     {:else}
       <button
         on:click={() => dispatch('nodeClicked', { nodeId, parentId })}
-        class="flex items-center gap-1"
+        class="clickable flex items-center gap-1 hover:text-white"
       >
         <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
         {nodeValue}
