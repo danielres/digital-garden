@@ -6,13 +6,16 @@ const messages: Message[] = [{ content: 'one' }]
 let controllers: ReadableStreamDefaultController[] = [] // Array to keep all connected client controllers
 
 export async function GET() {
+  let currentController: ReadableStreamDefaultController
+
   const stream = new ReadableStream({
     start(controller) {
-      messages.forEach((data) => controller.enqueue(`data: ${JSON.stringify(data)}\n\n`)) // Enqueue existing messages
+      messages.forEach((data) => controller.enqueue(`data: ${JSON.stringify(data)}\n\n`))
       controllers.push(controller)
+      currentController = controller
     },
     cancel() {
-      controllers = controllers.filter((c) => c !== this) // Remove this controller from our list
+      controllers = controllers.filter((c) => c !== currentController)
     },
   })
 
