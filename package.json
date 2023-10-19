@@ -41,6 +41,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.5.3",
+    "@xstate/svelte": "^2.1.0",
     "acorn": "^8.10.0",
     "hsluv": "^1.0.1",
     "paper": "^0.12.17",
