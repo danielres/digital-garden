@@ -17,6 +17,7 @@
   <Tab bind:group={tabSet} name="tab6" value={6} on:click={() => goto('/sse')}>
     Server side events
   </Tab>
+  <Tab bind:group={tabSet} name="tab7" value={7} on:click={() => goto('/xstate')}>Xstate</Tab>
 </TabGroup>
 
 <slot />
