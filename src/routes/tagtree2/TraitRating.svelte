@@ -3,7 +3,7 @@
   import { getPersonsContext, type Trait } from './usePersons'
   import * as Icons from './Icons'
 
-  export let trait: Trait
+  export let trait: Pick<Trait, 'kind' | 'nodeId' | 'personId' | 'scale'>
   export let interactive = true
 
   const { traits, persons } = getPersonsContext()

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import * as data from './data'
+  import Tree from './NodeTree.svelte'
   import NodeView from './NodeView.svelte'
   import Panel from './Panel.svelte'
   import Persons from './Persons.svelte'
-  import Rating from './Rating.svelte'
-  import Tree from './Tree.svelte'
+  import TraitRating from './TraitRating.svelte'
+  import * as data from './data'
   import { getPersonsContext, setPersonsContext, type Person, type Trait } from './usePersons'
   import { getTreeContext, setTreeContext } from './useTree'
   import { upperFirst } from './utils/string'
@@ -22,10 +22,7 @@
   }
 
   // prettier-ignore
-  let currentTraits: Trait[] = [
-    { kind: 'interest', personId: 'tom', nodeId: '02', body: '02 is meh', scale: 3.5 },
-    { kind: 'expertise', personId: 'tom', nodeId: '02', body: 'pro 02', scale: 5 },
-  ]
+  let currentTraits: Trait[] = []
 
   let currentPerson: Person | undefined = undefined
 
@@ -91,7 +88,7 @@
         closeAllPanels()
         currentPerson = detail
       }}
-      node={currentNode}
+      bind:node={currentNode}
     />
   </Panel>
 {/if}
@@ -131,7 +128,7 @@
         <div class="variant-ghost p-4">
           <div class="flex justify-end items-center gap-2">
             <div class="">{upperFirst(trait.kind)}:</div>
-            <Rating {trait} interactive={false} />
+            <TraitRating {trait} interactive={false} />
           </div>
           <p class="">{trait.body}</p>
         </div>

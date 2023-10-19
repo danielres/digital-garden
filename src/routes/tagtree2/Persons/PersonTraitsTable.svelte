@@ -1,10 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Rating from './Rating.svelte'
-  import { getPersonsContext, type Person } from './usePersons'
-  import { getTreeContext } from './useTree'
-  import { onlyUnique } from './utils/array'
-  import { upperFirst } from './utils/string'
+  import TraitRating from '../TraitRating.svelte'
+  import { getPersonsContext, type Person } from '../usePersons'
+  import { getTreeContext } from '../useTree'
+  import { onlyUnique } from '../utils/array'
+  import { upperFirst } from '../utils/string'
 
   const { traits } = getPersonsContext()
   const { nodes } = getTreeContext()
@@ -37,12 +37,20 @@
     </div>
 
     {#each traitsKind as kind}
-      <div class="flex items-center">
-        <div class="opacity-75 hover:opacity-100 flex items-center gap-2">
+      <div class="">
+        <div class="opacity-75 hover:opacity-100 gap-2">
           {#each $traits.filter((t) => t.personId === person.id && t.nodeId === nodeId && t.kind === kind) as trait}
-            <Rating {trait} />
+            <TraitRating {trait} />
           {:else}
-            -
+            <button
+              class="w-full text-left opacity-10"
+              on:click={() => traits.add({ kind, personId: person.id, nodeId })}
+            >
+              <TraitRating
+                interactive={false}
+                trait={{ scale: 0, personId: person.id, nodeId, kind }}
+              />
+            </button>
           {/each}
         </div>
       </div>

@@ -41,6 +41,15 @@ export function setPersonsContext(persons: Person[], traits: Trait[]) {
         })
       )
     },
+
+    add(
+      trait: Pick<Trait, 'kind' | 'nodeId' | 'personId'> & {
+        body?: Trait['body']
+        scale?: Trait['scale']
+      }
+    ) {
+      traitsStore.update((traits) => [...traits, { body: '', scale: 0, ...trait }])
+    },
   }
 
   return setContext('persons', {

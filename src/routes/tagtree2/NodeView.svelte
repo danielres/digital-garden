@@ -1,15 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Rating from './Rating.svelte'
+  import TraitRating from './TraitRating.svelte'
   import { getPersonsContext } from './usePersons'
   import type { Node } from './useTree'
+  import { groupByKey } from './utils/object'
   import { upperFirst } from './utils/string'
 
   export let node: Node
   const { persons, traits } = getPersonsContext()
-
-  const groupByKey = (list, key) =>
-    list.reduce((hash, obj) => ({ ...hash, [obj[key]]: (hash[obj[key]] || []).concat(obj) }), {})
 
   $: details = groupByKey(
     $traits.filter((t) => t.nodeId === node.id),
@@ -29,7 +27,7 @@
     <div>
       <h2>
         <button on:click={() => dispatch('personClicked', person)}>
-          {upperFirst(person.name)}
+          {upperFirst(person?.name || personId)}
         </button>
       </h2>
       <div class=" variant-ghost p-4">
@@ -37,7 +35,7 @@
           <div>
             <div class="grid grid-cols-2 items-center gap-2">
               <div>{upperFirst(trait.kind)}:</div>
-              <Rating {trait} interactive={false} />
+              <TraitRating {trait} interactive={false} />
             </div>
 
             <div>{trait.body}</div>

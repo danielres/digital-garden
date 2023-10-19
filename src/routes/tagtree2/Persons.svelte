@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import TraitsList from './TraitsList.svelte'
+  import PersonTraitsTable from './Persons/PersonTraitsTable.svelte'
   import { getPersonsContext } from './usePersons'
 
   const { persons } = getPersonsContext()
@@ -17,7 +17,7 @@
       </h2>
 
       <div class="variant-soft rounded">
-        <TraitsList {person} on:personNodeClicked />
+        <PersonTraitsTable {person} on:personNodeClicked />
       </div>
     </div>
   {/each}
