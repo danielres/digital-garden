@@ -1,41 +1,68 @@
 import { createMachine } from 'xstate'
 
 // This machine is completely decoupled from Svelte
-export const toggleMachine = createMachine(
+export const nodeTreeMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QBcD2UoBswDoCWE2AxAIIDCZAogDKUBKJAKpQNoAMAuoqAA6qx5keVADtuIAB6IALADYA7DgCsADiUBOaaoBM6+UoCMsgDQgAnogDMObbLbT5mpbOnbt0y21kBfb6bQY2DgAZgCumJgABLA8YJBEACKUVLQMzOxcSCB8AkKi4lII2paKsuoGqupednoqlqYWRepKyvIqbCryutpqspa+-uhYuAAWAIaYwdGx8eQp9EysnOI5gsJiWYXabC3OluoqsirSBj0uJuaIBuraOCfS6pZubJ5KSl4DIAHDOOOT03EIIlkjQFullllVnkNqBCnJ1DgDGxHupHio9A56pcECoDDgnroDPIkfJLNI2PJpJ9vkEwhEAfEAMqMADyAAUMit+Gt8psripbgYPNohZY+rJ3koGohDjgqlohWwKgptPJ5L4-CARKgIHBxDSwFzcusCogALQXRpm444LzuNzqOxvJUqalDIIEbBGnkwyRWck4OwKOpPYmWIXSnGKLwaOr29qSt2BXB0qIxQHe6GmhCuSN6OWWOptaS4+wOpM-P5TdOQTMmvkIPqKJRdKp9VVqvSRgxiwNaNQl0uaaRUjVAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFsD2EwDo0DcwGIBhAeQAUBNAbQAYBdRUAB1VgEsAXV1AOwZAA9EARgCcADkwiA7CKEA2AEwBWagsXUhAGhABPRAuoS5AFhEBmatVMiFCqVLMBfR9rQZsqPPgCCAEV809EggzGycPHyCCEIqmGZyZolyQnbi0tp6CErGZnH2UkpCZgrmKQrOruhYuAS+AEreAOIABADKACrede2BfKEcXLzBUQpCxphyUjliUmKmCsZzZhmIALRjE4pmKtRySkpSQlZSFSBuWADGqIw6+ACyxABqAKK9wf3hQ6BRxkKYDtkzFM5KUhGIFCsEPlMGIYuJjLMFECxE4XGcqpgrjcfP43kwWAMIsNEGZjOM5FYlOJqIliiplrp9CZ-olLIVqA4xCIlKdzpgAIYQCD3J6vOh9AmfSLCWaSGTyZSqdRaRkIPZSTDGajSbaGBRiOYiXkYwXCkgUPEhSWDaVQ5lKPYc2FmcGHYyQlQasRyBJHCwqClyY3uU2YABOYEFt1IAElCABpZqkLrPAByPXF72tRO+iFMuSUQJMtMmIh9kPVmu1UiRCRm5mMwawodgAAtUAB3ZoAM1YYAANmbiKmAGIxup3S0fG3ErLFTB2QscpEHaQiD0JTBKZS2RY02lGtF83CsbhQfD1JptdpkKfZr4CfRgmGTbXeqkc0QMzLblmFURamWsL2E2mLXLcl4tB0XQZkE+JhDOubREIMR5JMCzbnsSgzJCozjAUvxqGY8g5DYYigViOinuekHXrembwYSD5RH6uSyLC2EcrsOS4TYcSwnsCxyLCdgIs4aLcFU8DBOcEoITmj4IKscgLiYDrKBYwmwrCkLrBokhiJhUjcVSSSgTUclMbaxgQqqIjjDMupiMuhbCeUR4YpRllSrOsjjEU4IWLICxSJMkLbAWuxzGC2QiNQhSopUIZCt5iGKcUIiagcyTxBxMWQgiKkGEiKEWIsohBh5yUQOGkYQJkjE+UhQIasY2VFMJMT5aqDqZWo4LOcJyQJIl6LVZgbadj2faDqlClRD6+HxAsFh2AUCweoc-xuYN3ryIk5meNRc3MXmxEwgcojepMLpgh6mXZDMsI0vZWqHBR4HHVm8mndEowSL82FzLYCQaLxCiYFYQVgpMoUlI24lAA */
     predictableActionArguments: true,
-    id: 'toggle',
-    initial: 'idle',
+    id: 'mode',
+    initial: 'move',
 
     states: {
-      idle: {
+      move: {
         on: {
-          ACCELERATE: 'half speed',
+          COPY: 'copy',
+          ADD: 'add.ready',
         },
       },
 
-      'full speed': {
+      copy: {
         on: {
-          DECELERATE: {
-            target: 'half speed',
-            actions: ['log'],
+          MOVE: 'move',
+          ADD: 'add',
+          'DRAG START': 'copying',
+        },
+      },
+
+      add: {
+        on: {
+          MOVE: 'move',
+          COPY: 'copy',
+        },
+
+        states: {
+          ready: {
+            on: {
+              'SET PARENT': { target: 'show field', actions: ['setParent'] },
+            },
           },
-          STOP: 'idle',
+
+          'show field': {
+            on: {
+              CONFIRM: 'ready',
+            },
+          },
+        },
+
+        initial: 'ready',
+      },
+
+      moving: {
+        on: {
+          'DRAG STOP': 'move',
         },
       },
 
-      'half speed': {
+      copying: {
         on: {
-          ACCELERATE: 'full speed',
-          DECELERATE: 'idle',
+          'DRAG STOP': 'copy',
         },
       },
     },
   },
   {
     actions: {
-      log: (context, event) => console.log('log', event),
+      setParent: (context, event) => console.log('set parent', context, event),
     },
   }
 )
