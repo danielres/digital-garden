@@ -1,16 +1,14 @@
 import { get, writable, type Writable } from 'svelte/store'
 
-export type EventTypes = 'CLICK'
-export type Event = { type: EventTypes }
-export type State = 'start' | 'playing'
+export type Event<T extends string> = { type: T }
 
-export type Transitions<Context> = {
+export type Transitions<State extends string, EventType extends string, Context> = {
   [key in State]: {
-    [key in Event['type']]?: {
+    [key in EventType]?: {
       target: State
       actions?: readonly ((
         current: State,
-        event: Event,
+        event: Event<EventType>,
         next: State,
         context: Context
       ) => Context)[]
@@ -18,17 +16,22 @@ export type Transitions<Context> = {
   }
 }
 
-export function useMachine<Context>(
-  transitions: Transitions<Context>,
+export function useMachine<State extends string, EventType extends string, Context>(
+  transitions: Transitions<State, EventType, Context>,
   initial: State,
   initialContext: Context
 ) {
   const state = writable(initial)
   const context = writable(initialContext)
 
-  function send(event: Event) {
+  function send(event: Event<EventType>) {
     const currentContext = get(context)
-    const newTransition = transition<Context>(state, event, transitions, currentContext)
+    const newTransition = transition<State, EventType, Context>(
+      state,
+      event,
+      transitions,
+      currentContext
+    )
     context.set(newTransition.context)
     state.set(newTransition.state)
   }
@@ -36,14 +39,14 @@ export function useMachine<Context>(
   return { state, context, send }
 }
 
-function transition<Context>(
+function transition<State extends string, EventType extends string, Context>(
   state: Writable<State>,
-  event: Event,
-  transitions: Transitions<Context>,
+  event: Event<EventType>,
+  transitions: Transitions<State, EventType, Context>,
   currentContext: Context
 ): { state: State; context: Context } {
   const currentState = get(state)
-  const eventType = event.type as keyof typeof transitions[typeof currentState]
+  const eventType = event.type as EventType
   const stateKey = transitions[currentState][eventType]
 
   if (!stateKey) return { state: currentState, context: currentContext }
