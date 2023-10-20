@@ -21,6 +21,7 @@
     Xstate-counter
   </Tab>
   <Tab bind:group={tabSet} name="tab8" value={8} on:click={() => goto('/xstate')}>Xstate</Tab>
+  <Tab bind:group={tabSet} name="tab9" value={9} on:click={() => goto('/fsm')}>Fsm</Tab>
 </TabGroup>
 
 <slot />
