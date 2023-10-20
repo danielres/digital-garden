@@ -1,35 +1,63 @@
-import { writable } from 'svelte/store'
+import { get, writable, type Writable } from 'svelte/store'
 
 export type EventTypes = 'CLICK'
 export type Event = { type: EventTypes }
 export type State = 'start' | 'playing'
 
-export type Transitions = {
+export type Transitions<Context> = {
   [key in State]: {
     [key in Event['type']]?: {
       target: State
-      actions?: readonly ((state: State, event: Event) => void)[]
+      actions?: readonly ((
+        current: State,
+        event: Event,
+        next: State,
+        context: Context
+      ) => Context)[]
     }
   }
 }
 
-export function useMachine(transitions: Transitions, initial: State) {
+export function useMachine<Context>(
+  transitions: Transitions<Context>,
+  initial: State,
+  initialContext: Context
+) {
   const state = writable(initial)
+  const context = writable(initialContext)
 
   function send(event: Event) {
-    state.update((state) => transition(state, event, transitions))
+    const currentContext = get(context)
+    const newTransition = transition<Context>(state, event, transitions, currentContext)
+    context.set(newTransition.context)
+    state.set(newTransition.state)
   }
 
-  return { state, send }
+  return { state, context, send }
 }
 
-function transition(state: State, event: Event, transitions: Transitions): State {
-  const eventType = event.type as keyof typeof transitions[typeof state]
-  const stateKey = transitions[state][eventType]
+function transition<Context>(
+  state: Writable<State>,
+  event: Event,
+  transitions: Transitions<Context>,
+  currentContext: Context
+): { state: State; context: Context } {
+  const currentState = get(state)
+  const eventType = event.type as keyof typeof transitions[typeof currentState]
+  const stateKey = transitions[currentState][eventType]
 
-  if (!stateKey) return state
+  if (!stateKey) return { state: currentState, context: currentContext }
 
-  if ('actions' in stateKey) stateKey.actions?.forEach((fn) => fn(state, event))
+  let updatedContext = currentContext
 
-  return stateKey.target ?? state
+  if ('actions' in stateKey) {
+    for (const action of stateKey.actions || []) {
+      updatedContext = action(currentState, event, stateKey.target ?? currentState, updatedContext)
+    }
+  }
+
+  return {
+    state: stateKey.target ?? currentState,
+    context: updatedContext,
+  }
 }

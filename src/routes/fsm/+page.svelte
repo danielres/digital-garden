@@ -1,24 +1,39 @@
 <script lang="ts">
   import { useMachine, type Event, type State, type Transitions } from './fsm'
 
-  const transitions: Transitions = {
+  function increment(state: State, event: Event, nextState: State, context: any) {
+    context.count++
+    return context
+  }
+  function log(state: State, event: Event, nextState: State, context: any) {
+    console.log({ state, event, nextState, context })
+    return context
+  }
+
+  type Context = {
+    count: number
+    message: string
+  }
+
+  const transitions = {
     start: {
       CLICK: {
         target: 'playing',
-        actions: [
-          (state: State, event: Event) => {
-            console.log('FOO', state, event)
-          },
-        ],
+        actions: [log, increment, log],
       },
     },
     playing: {
-      CLICK: { target: 'start' },
+      CLICK: { target: 'start', actions: [increment] },
     },
   } as const
 
-  const { state, send } = useMachine(transitions, 'start')
+  const initialContext = {
+    count: 0,
+    message: 'Initial Message',
+  }
+
+  const { state, context, send } = useMachine<Context>(transitions, 'start', initialContext)
 </script>
 
-{$state}
+{$state} - {JSON.stringify($context, null, 2)}
 <button on:click={() => send({ type: 'CLICK' })}>CLICK</button>
