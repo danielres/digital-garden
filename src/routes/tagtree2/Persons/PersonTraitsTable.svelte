@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import TraitRating from '../TraitRating.svelte'
-  import { getPersonsContext, type Person } from '../usePersons'
+  import type { Person } from '../data'
+  import { getPersonsContext } from '../usePersons'
   import { getTreeContext } from '../useTree'
   import { onlyUnique } from '../utils/array'
   import { upperFirst } from '../utils/string'

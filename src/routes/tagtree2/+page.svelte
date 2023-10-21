@@ -4,8 +4,9 @@
   import Panel from './Panel.svelte'
   import Persons from './Persons.svelte'
   import TraitRating from './TraitRating.svelte'
+  import type { Person, Trait } from './data'
   import * as data from './data'
-  import { getPersonsContext, setPersonsContext, type Person, type Trait } from './usePersons'
+  import { getPersonsContext, setPersonsContext } from './usePersons'
   import { getTreeContext, setTreeContext } from './useTree'
   import { upperFirst } from './utils/string'
 

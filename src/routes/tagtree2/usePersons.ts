@@ -1,14 +1,6 @@
 import { getContext, setContext } from 'svelte'
 import { writable } from 'svelte/store'
-
-export type Person = { id: string; name: string; body: string }
-export type Trait = {
-  kind: string
-  personId: string
-  nodeId: string
-  body: string
-  scale: number
-}
+import type { Person, Trait } from './data'
 
 export function setPersonsContext(persons: Person[], traits: Trait[]) {
   const personsStore = {

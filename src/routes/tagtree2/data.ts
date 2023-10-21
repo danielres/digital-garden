@@ -1,5 +1,13 @@
-import type { Person, Trait } from './usePersons'
-import type { Edge, Node } from './useTree'
+export type Node = { value: string; id: string; body: string }
+export type Edge = { parentId: string; childId: string }
+export type Person = { id: string; name: string; body: string }
+export type Trait = {
+  kind: string
+  personId: string
+  nodeId: string
+  body: string
+  scale: number
+}
 
 export const persons: Person[] = [
   { id: 'daniel', name: 'Daniel', body: 'I am a person and I love cats.' },

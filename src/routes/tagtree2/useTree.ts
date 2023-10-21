@@ -1,9 +1,7 @@
 import { getContext, setContext } from 'svelte'
 import { writable } from 'svelte/store'
 import { onlyUnique } from './utils/array'
-
-export type Node = { value: string; id: string; body: string }
-export type Edge = { parentId: string; childId: string }
+import type { Edge, Node } from './data'
 
 type DragAction = 'move' | 'copy'
 

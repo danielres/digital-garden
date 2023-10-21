@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Ratings } from '@skeletonlabs/skeleton'
-  import { getPersonsContext, type Trait } from './usePersons'
   import * as Icons from './Icons'
+  import type { Trait } from './data'
+  import { getPersonsContext } from './usePersons'
 
   export let trait: Pick<Trait, 'kind' | 'nodeId' | 'personId' | 'scale'>
   export let interactive = true
