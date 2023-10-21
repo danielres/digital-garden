@@ -1,6 +1,6 @@
 export type Node = { value: string; id: string; body: string }
 export type Edge = { parentId: string; childId: string }
-export type Person = { id: string; name: string; body: string }
+export type Person = { id: string; name: string; body: string; picture: string }
 export type Trait = {
   kind: string
   personId: string
@@ -10,9 +10,24 @@ export type Trait = {
 }
 
 export const persons: Person[] = [
-  { id: 'daniel', name: 'Daniel', body: 'I am a person and I love cats.' },
-  { id: 'jill', name: 'Jill', body: 'I am a person and I love dogs.' },
-  { id: 'paul', name: 'Paul', body: 'I am a person and I love hamsters.' },
+  {
+    id: 'daniel',
+    name: 'Daniel',
+    body: 'I am a person and I love cats.',
+    picture: 'https://i.pravatar.cc/150?img=11',
+  },
+  {
+    id: 'jill',
+    name: 'Jill',
+    body: 'I am a person and I love dogs.',
+    picture: 'https://i.pravatar.cc/150?img=4',
+  },
+  {
+    id: 'paul',
+    name: 'Paul',
+    body: 'I am a person and I love hamsters.',
+    picture: 'https://i.pravatar.cc/150?img=8',
+  },
 ]
 
 export const traits: Trait[] = [
