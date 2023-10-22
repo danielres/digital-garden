@@ -37,7 +37,7 @@
           <div class="flex items-center gap-2 justify-between">
             <div class="font-bold">{upperFirst(trait.kind)}:</div>
 
-            <TraitRating {trait} interactive={false} />
+            <TraitRating bind:trait interactive={false} />
           </div>
 
           <p class="text-sm">{@html trait.body}</p>
