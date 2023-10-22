@@ -7,17 +7,17 @@
 </script>
 
 <div
-  class="stack fixed inset-8 md:inset-x-auto md:right-8 md:w-full md:max-w-md variant-ghost backdrop-blur overflow-y-auto"
+  class="grid fixed inset-8 md:inset-x-auto md:right-8 md:w-full md:max-w-md variant-ghost backdrop-blur"
   transition:fade={{ duration: 100 }}
 >
-  <div class="p-6">
-    <slot />
-  </div>
-
   <button
-    class="justify-self-end self-start p-2 text-3xl opacity-30 hover:opacity-80"
+    class="justify-self-end self-start p-2 pb-0 text-3xl opacity-30 hover:opacity-80"
     on:click={() => dispatch('close')}
   >
     <Icons.Xmark />
   </button>
+
+  <div class="p-6 pt-0 overflow-y-auto">
+    <slot />
+  </div>
 </div>
