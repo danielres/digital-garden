@@ -1,9 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-
+  import * as Icons from './Icons'
+  import { nodeClicked } from './events'
   import { getTreeContext } from './useTree'
   import { onlyUniqueObjects } from './utils/array'
-  import * as Icons from './Icons'
 
   export let depth = 0
   export let nodeId = 'root'
@@ -58,7 +58,7 @@
       <span class="root opacity-75 text-sm">[Root]</span>
     {:else}
       <button
-        on:click={() => dispatch('nodeClicked', { nodeId, parentId })}
+        on:click={() => nodeClicked(dispatch, nodeId)}
         class="clickable flex items-center gap-1 hover:text-white"
       >
         <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>

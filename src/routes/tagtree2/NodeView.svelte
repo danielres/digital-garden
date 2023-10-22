@@ -1,4 +1,5 @@
 <script lang="ts">
+  import PersonAvatarAndName from './Persons/PersonAvatarAndName.svelte'
   import { createEventDispatcher } from 'svelte'
   import TraitRating from './TraitRating.svelte'
   import type { Node } from './data'
@@ -30,9 +31,8 @@
 
       <div class="space-y-2">
         <h2>
-          <button class="flex gap-2 items-end" on:click={() => dispatch('personClicked', person)}>
-            <Avatar width="w-8" src={person?.picture} />
-            {upperFirst(person?.name || personId)}
+          <button class="clickable" on:click={() => dispatch('personClicked', person)}>
+            <PersonAvatarAndName {person} />
           </button>
         </h2>
         <div class="variant-ghost p-4 space-y-4">

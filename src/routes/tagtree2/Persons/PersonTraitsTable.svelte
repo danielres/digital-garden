@@ -62,10 +62,10 @@
 <style lang="postcss">
   .grid {
     grid-template-columns: 1fr repeat(calc(var(--colsCount) - 1), auto);
-    @apply px-2 py-1;
+    @apply py-1;
   }
   .grid > div {
-    @apply px-4 py-1;
+    @apply px-2 py-1;
   }
 
   .th {

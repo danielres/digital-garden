@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Avatar } from '@skeletonlabs/skeleton'
-  import { createEventDispatcher } from 'svelte'
   import Tree from './NodeTree.svelte'
   import NodeView from './NodeView.svelte'
   import Panel from './Panel.svelte'
   import Persons from './Persons.svelte'
+  import PersonAvatarAndName from './Persons/PersonAvatarAndName.svelte'
+  import PersonTraitsTable from './Persons/PersonTraitsTable.svelte'
   import TraitRating from './TraitRating.svelte'
-  import type { Person, Trait } from './data'
+  import type { Person, Trait, Node } from './data'
   import * as data from './data'
   import { getPersonsContext, setPersonsContext } from './usePersons'
   import { getTreeContext, setTreeContext } from './useTree'
@@ -20,7 +20,7 @@
   let currentNodeId: string | undefined = undefined
   $: currentNode = $nodes.find((n) => n.id === currentNodeId)
 
-  function viewNode({ nodeId }: { nodeId: string; parentId?: string }) {
+  function viewNode(nodeId: Node['id']) {
     currentNodeId = nodeId
   }
 
@@ -36,8 +36,6 @@
   }
 
   const { traits, persons } = getPersonsContext()
-
-  const dispatch = createEventDispatcher()
 </script>
 
 <div class="grid grid-cols-2 max-w-7xl mx-auto gap-8 my-8">
@@ -72,6 +70,8 @@
       <div class="">
         <Tree
           on:nodeClicked={({ detail }) => {
+            console.log('nodeClicked', detail)
+
             closeAllPanels()
             viewNode(detail)
           }}
@@ -105,8 +105,21 @@
       currentNodeId = undefined
     }}
   >
-    <h2>{currentPerson.name}</h2>
-    <div>{JSON.stringify(currentPerson)}</div>
+    <div class="space-y-4">
+      <PersonAvatarAndName person={currentPerson} />
+      <div class="text-sm">{@html currentPerson?.body}</div>
+    </div>
+
+    <div class="variant-soft rounded">
+      <PersonTraitsTable
+        person={currentPerson}
+        on:personNodeClicked={({ detail }) => {
+          closeAllPanels()
+          const { nodeId, personId } = detail
+          currentTraits = $traits.filter((t) => t.nodeId === nodeId && t.personId === personId)
+        }}
+      />
+    </div>
   </Panel>
 {/if}
 
@@ -123,24 +136,21 @@
   >
     <div class="space-y-8">
       <div class="space-y-4">
-        <h2 class="text-lg flex items-end gap-4">
-          <Avatar src={person?.picture} />
-          {person?.name ?? `Person with id ${personId} not found`}:
+        <h2 class="text-lg flex items-end gap-2">
+          <PersonAvatarAndName {person} />:
           <button
             class="clickable"
             on:click={() => {
               closeAllPanels()
-              viewNode({ nodeId: node.id })
+              viewNode(node.id)
             }}
           >
             {upperFirst(node.value)}
           </button>
         </h2>
-        <div class="text-sm">{person?.body}</div>
-        <hr />
-        <div class="text-sm">{node.body}</div>
+        <div class="text-sm">{@html person?.body}</div>
       </div>
-      <hr />
+
       <div class="space-y-4">
         {#each currentTraits as trait}
           <div class="">
@@ -152,6 +162,10 @@
           </div>
         {/each}
       </div>
+
+      <hr />
+
+      <div class="text-sm">{@html node.body}</div>
     </div>
   </Panel>
 {/if}
