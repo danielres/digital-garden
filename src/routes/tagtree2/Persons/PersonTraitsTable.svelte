@@ -38,7 +38,7 @@
       <div class="">
         <div class="opacity-75 hover:opacity-100 flex h-full">
           {#each $traits.filter((t) => t.personId === person.id && t.nodeId === nodeId && t.kind === kind) as trait}
-            <TraitRating {trait} />
+            <TraitRating bind:trait />
           {:else}
             <button
               class="w-full text-left opacity-10"

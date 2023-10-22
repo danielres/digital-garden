@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { createEventDispatcher } from 'svelte'
   import PersonAvatarAndName from '../../Persons/PersonAvatarAndName.svelte'
   import TraitRating from '../../TraitRating.svelte'
   import { getPersonsContext } from '../../usePersons'
@@ -17,7 +16,6 @@
     'personId'
   )
 
-  const dispatch = createEventDispatcher()
   const { nodes } = getTreeContext()
 </script>
 
@@ -42,7 +40,7 @@
             <div>
               <div class="flex justify-between items-center">
                 <div class="font-bold">{upperFirst(trait.kind)}</div>
-                <TraitRating {trait} interactive={false} />
+                <TraitRating bind:trait interactive={true} />
               </div>
 
               <div class="text-sm">{trait.body}</div>
