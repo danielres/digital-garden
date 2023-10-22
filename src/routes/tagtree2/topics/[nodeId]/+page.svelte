@@ -1,15 +1,16 @@
 <script lang="ts">
-  import PersonAvatarAndName from './Persons/PersonAvatarAndName.svelte'
+  import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
-  import TraitRating from './TraitRating.svelte'
-  import type { Node } from './data'
-  import { getPersonsContext } from './usePersons'
-  import { groupByKey } from './utils/object'
-  import { upperFirst } from './utils/string'
-  import { Avatar } from '@skeletonlabs/skeleton'
+  import PersonAvatarAndName from '../../Persons/PersonAvatarAndName.svelte'
+  import TraitRating from '../../TraitRating.svelte'
+  import { getPersonsContext } from '../../usePersons'
+  import { getTreeContext } from '../../useTree'
+  import { groupByKey } from '../../utils/object'
+  import { upperFirst } from '../../utils/string'
 
-  export let node: Node
   const { persons, traits } = getPersonsContext()
+
+  $: node = nodes.findById($page.params.nodeId)
 
   $: details = groupByKey(
     $traits.filter((t) => t.nodeId === node.id),
@@ -17,11 +18,12 @@
   )
 
   const dispatch = createEventDispatcher()
+  const { nodes } = getTreeContext()
 </script>
 
 <div class="space-y-8">
   <div class="space-y-2">
-    <h2 class="!font-normal text-xl">{upperFirst(node.value)}</h2>
+    <h2 class="text-lg">{upperFirst(node.value)}</h2>
     <div class="opacity-75 prose-sm text-surface-100 leading-snug">{@html node.body}</div>
   </div>
 
@@ -31,9 +33,9 @@
 
       <div class="space-y-2">
         <h2>
-          <button class="clickable" on:click={() => dispatch('personClicked', person)}>
+          <a href="/tagtree2/persons/{person?.id}" class="clickable">
             <PersonAvatarAndName {person} />
-          </button>
+          </a>
         </h2>
         <div class="variant-ghost p-4 space-y-4">
           {#each traits as trait}

@@ -24,4 +24,6 @@
   <Tab bind:group={tabSet} name="tab9" value={9} on:click={() => goto('/fsm')}>Fsm</Tab>
 </TabGroup>
 
-<slot />
+<div class="overflow-y-auto">
+  <slot />
+</div>

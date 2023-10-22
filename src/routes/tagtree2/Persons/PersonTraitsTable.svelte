@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import TraitRating from '../TraitRating.svelte'
   import type { Person } from '../data'
   import { getPersonsContext } from '../usePersons'
@@ -17,8 +16,6 @@
   $: traitNodeIds = personTraits.map((t) => t.nodeId).filter(onlyUnique)
 
   $: colsCount = personTraits.map((t) => t.kind).filter(onlyUnique).length + 1
-
-  const dispatch = createEventDispatcher()
 </script>
 
 <div class="grid" style:--colsCount={colsCount}>
@@ -29,12 +26,12 @@
 
   {#each traitNodeIds as nodeId}
     <div>
-      <button
+      <a
         class="clickable opacity-90 hover:opacity-100"
-        on:click={() => dispatch('personNodeClicked', { nodeId, personId: person.id })}
+        href={`/tagtree2/persons/${person.id}/${nodeId}`}
       >
         {nodes.findById(nodeId).value}
-      </button>
+      </a>
     </div>
 
     {#each traitsKind as kind}

@@ -13,9 +13,9 @@
   {#each $persons as person}
     <div class="min-w-[50%] flex-grow space-y-2">
       <h2>
-        <button class="clickable" on:click={() => personClicked(dispatch, person)}>
+        <a href="/tagtree2/persons/{person.id}" class="clickable">
           <PersonAvatarAndName {person} />
-        </button>
+        </a>
       </h2>
 
       <div class="variant-soft rounded px-4 py-2">
