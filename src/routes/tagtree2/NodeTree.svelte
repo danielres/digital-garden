@@ -4,13 +4,14 @@
   import { nodeClicked } from './events'
   import { getTreeContext } from './useTree'
   import { onlyUniqueObjects } from './utils/array'
+  import { upperFirst } from './utils/string'
 
   export let depth = 0
   export let nodeId = 'root'
   export let parentId = 'root'
 
   const context = getTreeContext()
-  const { nodes, edges, maxDepth, dragAction, getDescendants } = context
+  const { nodes, edges, maxDepth, mode, getDescendants } = context
 
   type DragEventCustom = DragEvent & {
     currentTarget: EventTarget & HTMLLIElement
@@ -29,7 +30,7 @@
       .map((edge) => {
         if (source.id !== edge.childId) return edge // not the edge we're looking for
         if (source.id === targetId) return edge // can't drop on self
-        if ($dragAction === 'copy') return [edge, { ...edge, parentId: targetId }]
+        if ($mode.type === 'copy') return [edge, { ...edge, parentId: targetId }]
         return { ...edge, parentId: targetId } // move the node under new parent
       })
       .flat()
@@ -41,7 +42,7 @@
 
 {#if depth === 0}
   <ul>
-    <svelte:self on:nodeClicked nodeId={'root'} depth={depth + 1} />
+    <svelte:self on:nodeClicked on:newNode nodeId={'root'} depth={depth + 1} />
   </ul>
 {:else}
   {@const nodeValue = $nodes.find((n) => n.id === nodeId)?.value}
@@ -52,25 +53,90 @@
     on:drop|preventDefault|stopPropagation={(e) => onDrop(e, nodeId)}
     on:dragover|preventDefault
     on:dragstart|self={onDragStart}
-    draggable={depth > 1}
+    draggable={['move', 'copy'].includes($mode.type) && depth > 1}
   >
     {#if nodeId === 'root'}
-      <span class="root opacity-75 text-sm">[Root]</span>
+      <span class="flex gap-1 items-center">
+        <span class="root opacity-75 text-sm">[Root]</span>
+        {#if $mode.type === 'add'}
+          <button
+            on:click={() =>
+              ($mode = { type: 'add.parentSelected', parentId: nodeId, inputText: '' })}
+            class="variant-ghost-success w-6 h-6 rounded-full"
+          >
+            +
+          </button>
+        {/if}
+      </span>
     {:else}
-      <button
-        on:click={() => nodeClicked(dispatch, nodeId)}
-        class="clickable flex items-center gap-1 hover:text-white"
-      >
-        <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
-        {nodeValue}
-      </button>
+      <div class="flex items-center gap-1">
+        <button
+          on:click={() => nodeClicked(dispatch, nodeId)}
+          class="clickable flex items-center gap-1 hover:text-white"
+        >
+          <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
+          {nodeValue}
+        </button>
+        {#if $mode.type === 'add'}
+          <button
+            on:click={() =>
+              ($mode = { type: 'add.parentSelected', parentId: nodeId, inputText: '' })}
+            class="variant-ghost-success w-6 h-6 rounded-full"
+          >
+            +
+          </button>
+        {/if}
+      </div>
     {/if}
 
-    {#if depth <= maxDepth && $edges.some((e) => e.parentId === nodeId)}
+    {#if $mode.type === 'add.parentSelected' || (depth <= maxDepth && $edges.some((e) => e.parentId === nodeId))}
       <ul class="ml-4">
+        {#if $mode.type === 'add.parentSelected' && $mode.parentId === nodeId}
+          <li>
+            <div class="flex items-center gap-1">
+              <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
+
+              <form
+                on:submit|preventDefault={() => {
+                  if ($mode.type !== 'add.parentSelected') return
+                  dispatch('newNode', { value: $mode.inputText, parentId: $mode.parentId })
+                  $mode = { type: 'add' }
+                }}
+                class="flex items-center gap-2"
+              >
+                <!-- svelte-ignore a11y-autofocus -->
+                <input
+                  autofocus
+                  class="input w-40 p-0 rounded px-1 py-0"
+                  type="text"
+                  bind:value={$mode.inputText}
+                  on:input={() => {
+                    if ('inputText' in $mode) $mode.inputText = upperFirst($mode.inputText)
+                  }}
+                />
+
+                <button
+                  type="submit"
+                  class="rounded-full variant-ghost-success text-success-600-300-token w-6 h-6 flex items-center justify-center"
+                >
+                  v
+                </button>
+
+                <button
+                  type="button"
+                  on:click={() => ($mode = { type: 'add' })}
+                  class="rounded-full w-6 h-6 flex items-center justify-center"
+                >
+                  x
+                </button>
+              </form>
+            </div>
+          </li>
+        {/if}
         {#each $edges.filter((e) => e.parentId === nodeId) as edge}
           <svelte:self
             on:nodeClicked
+            on:newNode
             nodeId={edge.childId}
             depth={depth + 1}
             parentId={edge.parentId}
