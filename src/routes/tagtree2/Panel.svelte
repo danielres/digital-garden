@@ -18,6 +18,14 @@
   </button>
 
   <div class="p-6 pt-0 overflow-y-auto">
-    <slot />
+    <div>
+      <slot />
+    </div>
   </div>
 </div>
+
+<style lang="postcss">
+  .grid {
+    grid-template-rows: auto 1fr;
+  }
+</style>
