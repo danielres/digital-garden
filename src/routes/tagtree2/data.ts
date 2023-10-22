@@ -20,7 +20,7 @@ export const persons: Person[] = [
     id: 'jill',
     name: 'Jill',
     body: 'I am a person and I love dogs.',
-    picture: 'https://i.pravatar.cc/150?img=4',
+    picture: 'https://i.pravatar.cc/150?img=5',
   },
   {
     id: 'paul',
@@ -55,12 +55,12 @@ export const nodes: Node[] = [
   {
     value: 'Svelte',
     id: 'svelte',
-    body: `Svelte: A framework for building web user interfaces using components. <br />SvelteKit: A framework built on Svelte for creating web applications with routing, server-side rendering, and other features.`,
+    body: `<p><b>Svelte:</b> A framework for building web user interfaces using components.</p> <p><b>SvelteKit:</b> A framework built on Svelte for creating web applications with routing, server-side rendering, and other features.</p>`,
   },
   {
     value: 'Sveltekit',
     id: 'sveltekit',
-    body: 'Svelte: A framework for building web user interfaces using components. <br />SvelteKit: A framework built on Svelte for creating web applications with routing, server-side rendering, and other features.',
+    body: `<p><b>Svelte:</b> A framework for building web user interfaces using components.</p> <p><b>SvelteKit:</b> A framework built on Svelte for creating web applications with routing, server-side rendering, and other features.</p>`,
   },
 ]
 

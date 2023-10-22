@@ -1,10 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import TraitRating from './TraitRating.svelte'
+  import type { Node } from './data'
   import { getPersonsContext } from './usePersons'
-  import type { Node } from './useTree'
   import { groupByKey } from './utils/object'
   import { upperFirst } from './utils/string'
+  import { Avatar } from '@skeletonlabs/skeleton'
 
   export let node: Node
   const { persons, traits } = getPersonsContext()
@@ -17,31 +18,36 @@
   const dispatch = createEventDispatcher()
 </script>
 
-<div class="space-y-4">
-  <h2 class="!font-normal text-xl">{upperFirst(node.value)}</h2>
-  <div class="opacity-75 text-sm">{node.body}</div>
+<div class="space-y-8">
+  <div class="space-y-2">
+    <h2 class="!font-normal text-xl">{upperFirst(node.value)}</h2>
+    <div class="opacity-75 prose-sm text-surface-100 leading-snug">{@html node.body}</div>
+  </div>
 
-  {#each Object.entries(details) as [personId, traits]}
-    {@const person = persons.findById(personId)}
+  <div class="space-y-8">
+    {#each Object.entries(details) as [personId, traits]}
+      {@const person = persons.findById(personId)}
 
-    <div>
-      <h2>
-        <button on:click={() => dispatch('personClicked', person)}>
-          {upperFirst(person?.name || personId)}
-        </button>
-      </h2>
-      <div class=" variant-ghost p-4">
-        {#each traits as trait}
-          <div>
-            <div class="grid grid-cols-2 items-center gap-2">
-              <div>{upperFirst(trait.kind)}:</div>
-              <TraitRating {trait} interactive={false} />
+      <div class="space-y-2">
+        <h2>
+          <button class="flex gap-2 items-end" on:click={() => dispatch('personClicked', person)}>
+            <Avatar width="w-8" src={person?.picture} />
+            {upperFirst(person?.name || personId)}
+          </button>
+        </h2>
+        <div class="variant-ghost p-4 space-y-4">
+          {#each traits as trait}
+            <div>
+              <div class="flex justify-between items-center">
+                <div class="font-bold">{upperFirst(trait.kind)}</div>
+                <TraitRating {trait} interactive={false} />
+              </div>
+
+              <div class="text-sm">{trait.body}</div>
             </div>
-
-            <div>{trait.body}</div>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
-    </div>
-  {/each}
+    {/each}
+  </div>
 </div>

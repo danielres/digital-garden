@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Avatar } from '@skeletonlabs/skeleton'
+  import { createEventDispatcher } from 'svelte'
   import Tree from './NodeTree.svelte'
   import NodeView from './NodeView.svelte'
   import Panel from './Panel.svelte'
@@ -18,7 +20,7 @@
   let currentNodeId: string | undefined = undefined
   $: currentNode = $nodes.find((n) => n.id === currentNodeId)
 
-  function viewNode({ nodeId }: { nodeId: string; parentId: string }) {
+  function viewNode({ nodeId }: { nodeId: string; parentId?: string }) {
     currentNodeId = nodeId
   }
 
@@ -34,6 +36,8 @@
   }
 
   const { traits, persons } = getPersonsContext()
+
+  const dispatch = createEventDispatcher()
 </script>
 
 <div class="grid grid-cols-2 max-w-7xl mx-auto gap-8 my-8">
@@ -117,23 +121,37 @@
       currentTraits = []
     }}
   >
-    <div class="">
-      <h2 class="text-lg">{upperFirst(node.value)}</h2>
-      <p class="text-sm">{node.body}</p>
-    </div>
-
-    <div class="space-y-2">
-      <h2>{person?.name ?? `Person with id ${personId} not found`}</h2>
-
-      {#each currentTraits as trait}
-        <div class="variant-ghost p-4">
-          <div class="flex justify-end items-center gap-2">
-            <div class="">{upperFirst(trait.kind)}:</div>
-            <TraitRating {trait} interactive={false} />
+    <div class="space-y-8">
+      <div class="space-y-4">
+        <h2 class="text-lg flex items-end gap-4">
+          <Avatar src={person?.picture} />
+          {person?.name ?? `Person with id ${personId} not found`}:
+          <button
+            class="clickable"
+            on:click={() => {
+              closeAllPanels()
+              viewNode({ nodeId: node.id })
+            }}
+          >
+            {upperFirst(node.value)}
+          </button>
+        </h2>
+        <div class="text-sm">{person?.body}</div>
+        <hr />
+        <div class="text-sm">{node.body}</div>
+      </div>
+      <hr />
+      <div class="space-y-4">
+        {#each currentTraits as trait}
+          <div class="">
+            <div class="flex items-center gap-2 justify-between">
+              <div class="font-bold">{upperFirst(trait.kind)}:</div>
+              <TraitRating {trait} interactive={false} />
+            </div>
+            <p class="text-sm">{trait.body}</p>
           </div>
-          <p class="">{trait.body}</p>
-        </div>
-      {/each}
+        {/each}
+      </div>
     </div>
   </Panel>
 {/if}
