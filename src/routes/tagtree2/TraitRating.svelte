@@ -18,11 +18,19 @@
 
 <div class="flex gap-2 w-fit">
   <Ratings
-    bind:value={trait.scale}
+    value={trait.scale}
     max={5}
     {interactive}
     spacing="gap-0.5"
-    on:icon={(e) => (trait.scale = e.detail.index)}
+    on:icon={(e) => {
+      traits.update(($traits) => {
+        const index = $traits.findIndex(
+          (t) => t.personId === trait.personId && t.nodeId === trait.nodeId && t.kind === trait.kind
+        )
+        $traits[index].scale = e.detail.index
+        return $traits
+      })
+    }}
   >
     <svelte:fragment slot="empty"><Icons.SquareEmpty /></svelte:fragment>
     <svelte:fragment slot="half"><Icons.SquareHalved /></svelte:fragment>
