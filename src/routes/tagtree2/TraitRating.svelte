@@ -21,7 +21,7 @@
     value={trait.scale}
     max={5}
     {interactive}
-    spacing="gap-0.5"
+    spacing="gap-[1px]"
     on:icon={(e) => {
       traits.update(($traits) => {
         const index = $traits.findIndex(

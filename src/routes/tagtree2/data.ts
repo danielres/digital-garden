@@ -8,6 +8,28 @@ export type Trait = {
   body: string
   scale: number
 }
+export type Content = {
+  id: string
+  addedBy: Person['id']
+  addedAt: Date
+  type:
+    | 'internal.article'
+    | 'external.article'
+    | 'external.tutorial'
+    | 'external.video.youtube'
+    | 'external.audio.vimeo'
+  src: string
+  title: string
+  body: string
+  description: string
+}
+
+export type ContentTrait = {
+  contentId: Content['id']
+  nodeId: Node['id']
+  body: string
+  scale: number
+}
 
 export const persons: Person[] = [
   {
@@ -68,4 +90,21 @@ export const edges: Edge[] = [
   { parentId: 'root', childId: 'typescript' },
   { parentId: 'root', childId: 'svelte' },
   { parentId: 'svelte', childId: 'sveltekit' },
+]
+
+export const contents: Content[] = [
+  {
+    id: '1',
+    addedBy: 'daniel',
+    addedAt: new Date(),
+    type: 'external.tutorial',
+    src: 'https://svelte.dev/tutorial',
+    title: 'Svelte Tutorial',
+    body: '',
+    description: 'The official Svelte tutorial.',
+  },
+]
+
+export const contentTraits: ContentTrait[] = [
+  { contentId: '1', nodeId: 'svelte', body: '', scale: 5 },
 ]
