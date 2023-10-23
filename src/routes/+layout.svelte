@@ -22,6 +22,9 @@
   </Tab>
   <Tab bind:group={tabSet} name="tab8" value={8} on:click={() => goto('/xstate')}>Xstate</Tab>
   <Tab bind:group={tabSet} name="tab9" value={9} on:click={() => goto('/fsm')}>Fsm</Tab>
+  <Tab bind:group={tabSet} name="tab10" value={10} on:click={() => goto('/sveltefire')}>
+    Sveltefire
+  </Tab>
 </TabGroup>
 
 <div class="overflow-y-auto">
