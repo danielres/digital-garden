@@ -46,6 +46,7 @@
     "hsluv": "^1.0.1",
     "paper": "^0.12.17",
     "superpal": "^1.2.31",
+    "tailwind-merge": "^1.14.0",
     "xstate": "^4.38.2"
   }
 }
