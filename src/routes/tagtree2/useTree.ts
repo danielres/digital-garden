@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte'
 import { writable } from 'svelte/store'
 import type { Edge, Node } from './data'
-import { onlyUnique } from './utils/array'
+import { onlyUnique, onlyUniqueObjects } from './utils/array'
 import { slugify } from './utils/string'
 
 type Mode =
@@ -22,8 +22,22 @@ export function setTreeContext(nodes: Node[], edges: Edge[], maxDepth = 5) {
 
     add({ value, parentId }: { value: Node['value']; parentId: Node['id'] }) {
       const newNode = { value, id: slugify(value), body: '' }
-      nodesStore.update((nodes) => [...nodes, newNode])
-      edgesStore.update((edges) => [...edges, { parentId, childId: newNode.id }])
+      nodesStore.update(($nodes) => [...$nodes, newNode])
+      edgesStore.update(($edges) => [...$edges, { parentId, childId: newNode.id }])
+    },
+
+    copy({ id, newParentId }: { id: Node['id']; newParentId: Node['id'] }) {
+      edgesStore.update(($edges) =>
+        [...$edges, { parentId: newParentId, childId: id }].filter(onlyUniqueObjects)
+      )
+    },
+
+    move({ id, newParentId }: { id: Node['id']; newParentId: Node['id'] }) {
+      edgesStore.update(($edges) =>
+        $edges
+          .map((e) => (e.childId === id ? { ...e, parentId: newParentId } : e))
+          .filter(onlyUniqueObjects)
+      )
     },
   }
   const mode = writable<Mode>({ type: 'move' })

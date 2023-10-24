@@ -29,8 +29,10 @@
       <div class="space-y-4 variant-soft p-4">
         <MenuModes />
         <Tree
-          on:newNode={({ detail: { value, parentId } }) => nodes.add({ value, parentId })}
           on:nodeClicked={({ detail: nodeId }) => goto(`/tagtree2/topics/${nodeId}`)}
+          on:newNode={({ detail: { value, parentId } }) => nodes.add({ value, parentId })}
+          on:copy={({ detail: { id, newParentId } }) => nodes.copy({ id, newParentId })}
+          on:move={({ detail: { id, newParentId } }) => nodes.move({ id, newParentId })}
         />
       </div>
     </div>

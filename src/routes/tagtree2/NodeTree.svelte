@@ -3,12 +3,13 @@
   import * as Icons from './Icons'
   import { nodeClicked } from './events'
   import { getTreeContext } from './useTree'
-  import { onlyUniqueObjects } from './utils/array'
   import { upperFirst } from './utils/string'
 
   export let depth = 0
   export let nodeId = 'root'
   export let parentId = 'root'
+
+  const dispatch = createEventDispatcher()
 
   const context = getTreeContext()
   const { nodes, edges, maxDepth, mode, getDescendants } = context
@@ -26,23 +27,20 @@
 
     if (getDescendants(source.id, $edges).includes(targetId)) return // can't drop on descendant
 
-    $edges = $edges
-      .map((edge) => {
-        if (source.id !== edge.childId) return edge // not the edge we're looking for
-        if (source.id === targetId) return edge // can't drop on self
-        if ($mode.type === 'copy') return [edge, { ...edge, parentId: targetId }]
-        return { ...edge, parentId: targetId } // move the node under new parent
-      })
-      .flat()
-      .filter(onlyUniqueObjects)
+    $edges.forEach((edge) => {
+      if (source.id !== edge.childId) return // not the edge we're looking for
+      if (source.id === targetId) return // can't drop on self
+      const id = edge.childId
+      const newParentId = targetId
+      if ($mode.type === 'copy') return dispatch('copy', { id, newParentId }) // copy the node under new parent
+      if ($mode.type === 'move') return dispatch('move', { id, newParentId }) // move the node under new parent
+    })
   }
-
-  const dispatch = createEventDispatcher()
 </script>
 
 {#if depth === 0}
   <ul>
-    <svelte:self on:nodeClicked on:newNode nodeId={'root'} depth={depth + 1} />
+    <svelte:self on:nodeClicked on:newNode on:copy on:move nodeId={'root'} depth={depth + 1} />
   </ul>
 {:else}
   {@const nodeValue = $nodes.find((n) => n.id === nodeId)?.value}
@@ -79,8 +77,9 @@
         </button>
         {#if $mode.type === 'add'}
           <button
-            on:click={() =>
-              ($mode = { type: 'add.parentSelected', parentId: nodeId, inputText: '' })}
+            on:click={() => {
+              $mode = { type: 'add.parentSelected', parentId: nodeId, inputText: '' }
+            }}
             class="variant-ghost-success w-6 h-6 rounded-full"
           >
             +
@@ -137,6 +136,8 @@
           <svelte:self
             on:nodeClicked
             on:newNode
+            on:copy
+            on:move
             nodeId={edge.childId}
             depth={depth + 1}
             parentId={edge.parentId}
