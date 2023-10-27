@@ -27,6 +27,9 @@
     <Tab bind:group={tabSet} name="tab10" value={10} on:click={() => goto('/sveltefire')}>
       Sveltefire
     </Tab>
+    <Tab bind:group={tabSet} name="tab11" value={11} on:click={() => goto('/firestore')}>
+      Firestore
+    </Tab>
   </TabGroup>
   <div class="place-self-center justify-self-end mr-4">
     <LightSwitch />
