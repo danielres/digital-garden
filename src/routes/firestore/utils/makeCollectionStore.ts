@@ -21,8 +21,8 @@ export const makeCollectionStore = <T>(db: Firestore, path: string) => {
 
   return {
     ...readonly(store),
-    add(item: Partial<T>) {
-      addDoc(collection(db, path), { ...item, createdAt: serverTimestamp() })
+    async add(item: Partial<T>) {
+      return await addDoc(collection(db, path), { ...item, createdAt: serverTimestamp() })
     },
     del(id: string) {
       deleteDoc(doc(db, path, id))

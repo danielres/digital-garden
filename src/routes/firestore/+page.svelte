@@ -1,12 +1,13 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
+  import Edges from './Edges.svelte'
   import Todos from './Todos.svelte'
   import Topics from './Topics.svelte'
-  import Edges from './Edges.svelte'
+  import Tree from './Tree.svelte'
 
   let tabIdx = 0
-  const tabs = [Todos, Topics, Edges]
+  const tabs = [Tree, Topics, Edges, Todos]
 
   const handleHash = (hash: string) => {
     const name = hash.replace('#', '')
@@ -24,9 +25,7 @@
     {@const name = tab.name.replace('Proxy<', '').replace('>', '')}
     <button
       class="btn btn-sm {tabIdx === i ? 'variant-ghost-primary' : 'variant-soft'}"
-      on:click={() => {
-        goto($page.url.pathname + '#' + name)
-      }}
+      on:click={() => goto($page.url.pathname + '#' + name)}
     >
       {name}
     </button>
