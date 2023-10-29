@@ -39,6 +39,9 @@ export type Edge = DbRecord & {
   childId: Topic['id']
 }
 
+type ErrorCode = 'EDGE_ALEARY_EXISTS' | 'TOPIC_ALREADY_EXISTS'
+export type Result = { success: true } | { success: false; code: ErrorCode }
+
 const app = initializeApp(JSON.parse(PUBLIC_FIREBASE_CONFIG))
 const db = getFirestore(app)
 const auth = getAuth(app)
@@ -56,7 +59,16 @@ function makeAppContext() {
   const loading = writable(true)
   if (browser) getRedirectResult(auth).then(() => loading.set(false))
   const todos = makeCollectionStore<Todo>(db, 'todos')
-  const edges = makeCollectionStore<Edge>(db, 'edges2')
+  const _edges = makeCollectionStore<Edge>(db, 'edges2')
+  const edges = {
+    ..._edges,
+    add({ parentId, childId }: { parentId: Topic['id']; childId: Topic['id'] }): Result {
+      const existingEdge = get(_edges).find((e) => e.parentId === parentId && e.childId === childId)
+      if (existingEdge) return { success: false, code: 'EDGE_ALEARY_EXISTS' }
+      _edges.add({ parentId, childId })
+      return { success: true }
+    },
+  }
   const _topics = makeCollectionStore<Topic>(db, 'topics')
   const topics = {
     ..._topics,
@@ -75,7 +87,10 @@ function makeAppContext() {
       else edges.update(edge.id, { parentId: newParentId })
     },
     add({ name, parentId }: { name: string; parentId: Topic['id'] }) {
+      const extistingTopic = get(_topics).find((t) => t.name === name)
+      if (extistingTopic) return { success: false, code: 'TOPIC_ALREADY_EXISTS' }
       _topics.add({ name }).then((ref) => edges.add({ parentId, childId: ref.id }))
+      return { success: true }
     },
     getChildren(id: Topic['id']) {
       return get(edges).filter((e) => e.parentId === id)

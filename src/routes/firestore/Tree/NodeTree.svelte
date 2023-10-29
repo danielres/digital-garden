@@ -5,6 +5,7 @@
   import { onlyUnique } from '../utils/array'
   import { upperFirst } from '../utils/string'
   import { getTreeContext } from './treeContext'
+  import { fade } from 'svelte/transition'
 
   export let depth = 0
   export let nodeId = 'root'
@@ -45,6 +46,13 @@
       if ($mode.type === 'move') return dispatch('move', { id, newParentId }) // move the node under new parent
     })
   }
+
+  async function delay(ms = 100) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  let randomKey = Math.random()
+  const setRandomKey = () => (randomKey = Math.random())
 </script>
 
 {#if depth === 0}
@@ -118,46 +126,49 @@
     {#if $mode.type === 'add.parentSelected' || (depth <= maxDepth && $edges.some((e) => e.parentId === nodeId))}
       <ul class="ml-4">
         {#if $mode.type === 'add.parentSelected' && $mode.parentId === nodeId}
-          <li>
-            <div class="flex items-center gap-1">
-              <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
+          {#key randomKey}
+            <li in:fade>
+              <div class="flex items-center gap-1">
+                <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
 
-              <form
-                on:submit|preventDefault={() => {
-                  if ($mode.type !== 'add.parentSelected') return
-                  dispatch('newNode', { name: $mode.inputText, parentId: $mode.parentId })
-                  $mode = { type: 'add' }
-                }}
-                class="flex items-center gap-2"
-              >
-                <!-- svelte-ignore a11y-autofocus -->
-                <input
-                  autofocus
-                  class="input w-40 p-0 rounded px-1 py-0"
-                  type="text"
-                  bind:value={$mode.inputText}
-                  on:input={() => {
-                    if ('inputText' in $mode) $mode.inputText = upperFirst($mode.inputText)
+                <form
+                  on:submit|preventDefault={async () => {
+                    if ($mode.type !== 'add.parentSelected') return
+                    dispatch('newNode', { name: $mode.inputText, parentId: $mode.parentId })
+                    $mode = { type: 'add.parentSelected', parentId: nodeId, inputText: '' }
+                    setRandomKey()
                   }}
-                />
-
-                <button
-                  type="submit"
-                  class="rounded-full variant-ghost-success text-success-600-300-token w-6 h-6 flex items-center justify-center"
+                  class="flex items-center gap-4"
                 >
-                  v
-                </button>
+                  <!-- svelte-ignore a11y-autofocus -->
+                  <input
+                    autofocus
+                    class="input w-40 p-0 rounded px-1 py-0"
+                    type="text"
+                    bind:value={$mode.inputText}
+                    on:input={() => {
+                      if ('inputText' in $mode) $mode.inputText = upperFirst($mode.inputText)
+                    }}
+                  />
 
-                <button
-                  type="button"
-                  on:click={() => ($mode = { type: 'add' })}
-                  class="rounded-full w-6 h-6 flex items-center justify-center"
-                >
-                  x
-                </button>
-              </form>
-            </div>
-          </li>
+                  <button
+                    type="submit"
+                    class="rounded-full variant-ghost-success text-success-600-300-token w-6 h-6 flex items-center justify-center"
+                  >
+                    v
+                  </button>
+
+                  <button
+                    type="button"
+                    on:click={() => ($mode = { type: 'add' })}
+                    class="rounded-full h-6 flex items-center justify-center opacity-50 hover:opacity-100"
+                  >
+                    done
+                  </button>
+                </form>
+              </div>
+            </li>
+          {/key}
         {/if}
         {#each $edges.filter((e) => e.parentId === nodeId) as edge}
           <svelte:self

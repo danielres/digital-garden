@@ -1,11 +1,15 @@
 <script lang="ts">
+  import { Toast, initializeStores } from '@skeletonlabs/skeleton'
   import { getAppContext, setAppContext } from './appContext'
 
+  initializeStores()
   setAppContext()
 
   const { user, auth } = getAppContext()
   const { loading } = auth
 </script>
+
+<Toast />
 
 {#if $loading}
   <div class="fixed inset-0 flex place-items-center justify-center">
