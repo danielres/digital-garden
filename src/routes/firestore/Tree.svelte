@@ -5,7 +5,9 @@
   import MenuModes from './Tree/MenuModes.svelte'
   import NodeTree from './Tree/NodeTree.svelte'
   import { setTreeContext } from './Tree/treeContext'
+  import { paths } from './utils/navigation'
   import { toast as _toast } from './utils/toast'
+  import { goto } from '$app/navigation'
 
   const toast = _toast(getToastStore())
 
@@ -37,8 +39,8 @@
     }
   }
 
-  const onNodeClicked = (e: CustomEvent<{ nodeId: Topic['id'] }>) => {
-    console.log('onNodeClicked', e.detail)
+  const onNodeClicked = (e: CustomEvent<{ nodeId: Topic['id']; nodeValue: Topic['name'] }>) => {
+    goto(paths.topics(e.detail.nodeValue))
   }
 
   const onDelete = (e: CustomEvent<{ nodeId: Topic['id'] }>) => {

@@ -57,15 +57,7 @@
 
 {#if depth === 0}
   <ul>
-    <svelte:self
-      on:nodeClicked
-      on:newNode
-      on:copy
-      on:move
-      on:delete
-      nodeId={'root'}
-      depth={depth + 1}
-    />
+    <svelte:self on:nodeClicked on:newNode on:copy on:move on:delete {nodeId} depth={depth + 1} />
   </ul>
 {:else}
   {@const nodeValue = $nodes.find((n) => n.id === nodeId)?.name}
@@ -94,7 +86,7 @@
     {:else}
       <div class="flex items-center gap-1">
         <button
-          on:click={() => dispatch('nodeClicked', nodeId)}
+          on:click={() => dispatch('nodeClicked', { nodeId, nodeValue })}
           class="clickable flex items-center gap-1 hover:text-white"
         >
           <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
