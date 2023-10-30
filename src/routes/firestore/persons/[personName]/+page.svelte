@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { Avatar } from '@skeletonlabs/skeleton'
   import { groupByKey } from '../../../tagtree2/utils/object'
   import { getAppContext, type Person } from '../../appContext'
   import FormEditableDoc from '../../components/FormEditableDoc.svelte'
@@ -25,7 +26,10 @@
 {#if person}
   {#key person}
     <FormEditableDoc {handleUpdate}>
-      <div slot="title">{person.name}</div>
+      <div slot="title" class="flex items-center gap-2">
+        <Avatar src={person.picture} width="w-12" initials={person.name} />
+        {person.name}
+      </div>
 
       <div slot="fields">
         <label>
@@ -50,7 +54,7 @@
                 {@const topic = $topics.find((t) => trait.topicId === t.id)}
 
                 {#if topic}
-                  <li class="px-4 py-2 variant-soft">
+                  <li class="px-4 py-2 variant-soft rounded-md">
                     <a class="clickable" href={paths.topics(topic.name)}>{topic.name}</a>
                     : {trait.scale}
 
