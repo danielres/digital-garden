@@ -11,7 +11,10 @@
   const { user, auth } = getAppContext()
   const { loading } = auth
 
-  const tabs = [{ name: 'Topics', url: paths.topics() }]
+  const tabs = [
+    { name: 'Topics', url: paths.topics() },
+    { name: 'Persons', url: paths.persons() },
+  ]
 </script>
 
 <Toast />
@@ -50,6 +53,8 @@
       {/each}
     </div>
 
-    <slot />
+    <div>
+      <slot />
+    </div>
   </div>
 {/if}

@@ -24,11 +24,6 @@ type DbRecord = {
   updatedAt?: Timestamp
 }
 
-type Todo = DbRecord & {
-  text: string
-  complete: boolean
-}
-
 export type Topic = DbRecord & {
   text: string
   name: string
@@ -37,6 +32,13 @@ export type Topic = DbRecord & {
 export type Edge = DbRecord & {
   parentId: Topic['id']
   childId: Topic['id']
+}
+
+export type Person = DbRecord & {
+  name: string
+  slug: string
+  body: string
+  picture: string
 }
 
 type ErrorCode = 'EDGE_ALEARY_EXISTS' | 'TOPIC_ALREADY_EXISTS'
@@ -58,7 +60,7 @@ export function getAppContext() {
 function makeAppContext() {
   const loading = writable(true)
   if (browser) getRedirectResult(auth).then(() => loading.set(false))
-  const todos = makeCollectionStore<Todo>(db, 'todos')
+  const persons = makeCollectionStore<Person>(db, 'persons')
   const _edges = makeCollectionStore<Edge>(db, 'edges2')
   const edges = {
     ..._edges,
@@ -98,5 +100,5 @@ function makeAppContext() {
   }
   const user = readonly(writable(auth?.currentUser ?? null, (set) => onAuthStateChanged(auth, set)))
   const signin = () => signInWithPopup(auth, googleAuthprovider)
-  return { user, todos, topics, edges, auth: { ...auth, loading, signin } }
+  return { user, persons, topics, edges, auth: { ...auth, loading, signin } }
 }
