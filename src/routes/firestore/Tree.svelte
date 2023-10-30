@@ -51,12 +51,14 @@
   setTreeContext()
 </script>
 
-<MenuModes />
+<div class="space-y-4">
+  <MenuModes />
 
-<NodeTree
-  on:copy={onCopy}
-  on:move={onMove}
-  on:newNode={onNewNode}
-  on:nodeClicked={onNodeClicked}
-  on:delete={onDelete}
-/>
+  <NodeTree
+    on:copy={onCopy}
+    on:move={onMove}
+    on:newNode={onNewNode}
+    on:nodeClicked={onNodeClicked}
+    on:delete={onDelete}
+  />
+</div>

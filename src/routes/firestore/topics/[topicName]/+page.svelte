@@ -1,49 +1,59 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
   import { page } from '$app/stores'
-  import NodeTree from '../../Tree/NodeTree.svelte'
-  import { setTreeContext } from '../../Tree/treeContext'
+  import MarkdownIt from 'markdown-it'
   import { getAppContext } from '../../appContext'
   import { renderDate } from '../../utils/date'
-  import { paths } from '../../utils/navigation'
+  import Markdown from '../../Markdown.svelte'
 
-  setTreeContext()
-
-  const { topics, edges } = getAppContext()
-
+  const { topics } = getAppContext()
   $: topic = $topics.find((t) => t.name === $page.params.topicName)
-  $: parentIds = $edges.filter((e) => topic && e.childId === topic.id).map((e) => e.parentId)
-  $: parents = $topics.filter((t) => parentIds.includes(t.id))
+
+  type FormOnSubmitEvent = Event & { currentTarget: EventTarget & HTMLFormElement }
+  type FormOnSubmit = (e: FormOnSubmitEvent) => void
+
+  let isEditing = false
+
+  const onUpdateTopic: FormOnSubmit = (e) => {
+    const formEl = e.currentTarget
+    const formData = new FormData(formEl)
+    const { text } = Object.fromEntries(formData) as Record<string, string>
+    topic && topics.update(topic.id, { text })
+    formEl.reset()
+    isEditing = false
+  }
+
+  const md = new MarkdownIt()
 </script>
 
 {#if topic}
-  <div class="grid grid-cols-[2fr_1fr] gap-4">
-    <div class="">
-      <h2>Topic: {topic.name}</h2>
-      <p class="tex-sm opacity-75">Added on {renderDate(topic.createdAt.toDate())}</p>
-    </div>
+  <div class="variant-ghost p-4">
+    <div class="stack">
+      <div class="grid gap-4">
+        <div>
+          <h2>Topic: {topic.name}</h2>
+          <div class="tex-sm opacity-75">Added on {renderDate(topic.createdAt.toDate())}</div>
+        </div>
 
-    <div class="grid variant-ghost p-4 gap-4">
-      <div class="flex gap-2">
-        {#each parents as parent, i}
-          <button
-            on:click={() => goto(paths.topics(parent.name))}
-            class="opacity-50 text-sm clickable"
-          >
-            {parent.name}
-          </button>
-          {#if i < parents.length - 1}<span class="opacity-50 text-sm">|</span>{/if}
-        {/each}
+        {#if isEditing}
+          <form on:submit|preventDefault={onUpdateTopic} class="contents">
+            <label class="">
+              <span>Description</span>
+              <!-- prettier-ignore -->
+              <textarea class="textarea" name="text" rows="4" cols="50">{topic.text ?? ''}</textarea>
+            </label>
+            <button class="btn variant-ghost-primary rounded" type="submit">Update</button>
+          </form>
+        {:else if topic.text}
+          <Markdown text={topic.text} />
+        {:else}
+          <div class="text-sm opacity-50">No description provided</div>
+        {/if}
       </div>
 
-      <div>
-        <NodeTree
-          nodeId={topic.id}
-          on:nodeClicked={(e) => {
-            const topicName = e.detail.nodeValue
-            goto(paths.topics(topicName))
-          }}
-        />
+      <div class="justify-self-end">
+        {#if !isEditing}
+          <button on:click={() => (isEditing = true)}>edit</button>
+        {/if}
       </div>
     </div>
   </div>
