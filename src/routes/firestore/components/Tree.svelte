@@ -1,13 +1,13 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
   import { getToastStore } from '@skeletonlabs/skeleton'
   import { get } from 'svelte/store'
-  import { getAppContext, type Topic } from './appContext'
+  import { getAppContext, type Topic } from '../appContext'
+  import { paths } from '../utils/navigation'
+  import { toast as _toast } from '../utils/toast'
   import MenuModes from './Tree/MenuModes.svelte'
   import NodeTree from './Tree/NodeTree.svelte'
   import { setTreeContext } from './Tree/treeContext'
-  import { paths } from './utils/navigation'
-  import { toast as _toast } from './utils/toast'
-  import { goto } from '$app/navigation'
 
   const toast = _toast(getToastStore())
 

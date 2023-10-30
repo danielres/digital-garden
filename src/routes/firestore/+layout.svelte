@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Toast, initializeStores } from '@skeletonlabs/skeleton'
-  import Tree from './Tree.svelte'
+  import Tree from './components/Tree.svelte'
   import { getAppContext, setAppContext } from './appContext'
   import { paths } from './utils/navigation'
   import { page } from '$app/stores'

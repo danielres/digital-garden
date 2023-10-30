@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tree from '../Tree.svelte'
+  import Tree from '../components/Tree.svelte'
 </script>
 
 <div class="grid grid-cols-2">

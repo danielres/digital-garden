@@ -3,7 +3,7 @@
   import MarkdownIt from 'markdown-it'
   import { getAppContext } from '../../appContext'
   import { renderDate } from '../../utils/date'
-  import Markdown from '../../Markdown.svelte'
+  import Markdown from '../../components/Markdown.svelte'
 
   const { topics } = getAppContext()
   $: topic = $topics.find((t) => t.name === $page.params.topicName)

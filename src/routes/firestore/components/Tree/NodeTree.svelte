@@ -1,11 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import * as Icons from '../Icons'
-  import { getAppContext, type Edge, type Topic } from '../appContext'
-  import { onlyUnique } from '../utils/array'
-  import { upperFirst } from '../utils/string'
-  import { getTreeContext } from './treeContext'
   import { fade } from 'svelte/transition'
+  import * as Icons from '../../Icons'
+  import { getAppContext, type Edge, type Topic } from '../../appContext'
+  import { onlyUnique } from '../../utils/array'
+  import { upperFirst } from '../../utils/string'
+  import { getTreeContext } from './treeContext'
 
   export let depth = 0
   export let nodeId = 'root'
