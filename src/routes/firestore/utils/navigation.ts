@@ -7,4 +7,6 @@ export const paths = {
     [BASE_PATH, 'persons', personName].filter(Boolean).join('/'),
 
   topics: (topicName?: Topic['name']) => [BASE_PATH, 'topics', topicName].filter(Boolean).join('/'),
+
+  traits: () => [BASE_PATH, 'traits'].join('/'),
 }

@@ -41,6 +41,14 @@ export type Person = DbRecord & {
   picture: string
 }
 
+export type Trait = DbRecord & {
+  scale: number
+  targetKind: 'person'
+  targetId: Person['id']
+  topicId: Topic['id']
+  kind: 'interest' | 'expertise'
+}
+
 type ErrorCode = 'EDGE_ALEARY_EXISTS' | 'TOPIC_ALREADY_EXISTS'
 export type Result = { success: true } | { success: false; code: ErrorCode }
 
@@ -98,7 +106,8 @@ function makeAppContext() {
       return get(edges).filter((e) => e.parentId === id)
     },
   }
+  const traits = makeCollectionStore<Trait>(db, 'traits2')
   const user = readonly(writable(auth?.currentUser ?? null, (set) => onAuthStateChanged(auth, set)))
   const signin = () => signInWithPopup(auth, googleAuthprovider)
-  return { user, persons, topics, edges, auth: { ...auth, loading, signin } }
+  return { user, persons, topics, edges, traits, auth: { ...auth, loading, signin } }
 }

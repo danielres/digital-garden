@@ -14,6 +14,7 @@
   const tabs = [
     { name: 'Topics', url: paths.topics() },
     { name: 'Persons', url: paths.persons() },
+    { name: 'Traits', url: paths.traits() },
   ]
 </script>
 
