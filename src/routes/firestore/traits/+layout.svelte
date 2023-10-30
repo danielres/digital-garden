@@ -20,9 +20,11 @@
             {#if person && topic}
               <Avatar src={person.picture} width="w-8" />
               <div>
-                <a class="clickable" href={paths.persons(person.name)}>{person.name}</a>
-                -
-                <a href={paths.topics(topic.name)} class="clickable">{topic.name}</a>
+                <a href={paths.traits(trait.id)} class="clickable">
+                  {person.name}
+                  -
+                  {topic.name}
+                </a>
               </div>
               <div>{trait.kind}: {trait.scale}</div>
             {/if}

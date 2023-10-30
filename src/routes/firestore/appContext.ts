@@ -47,6 +47,7 @@ export type Trait = DbRecord & {
   targetId: Person['id']
   topicId: Topic['id']
   kind: 'interest' | 'expertise'
+  text: string
 }
 
 type ErrorCode = 'EDGE_ALEARY_EXISTS' | 'TOPIC_ALREADY_EXISTS'
