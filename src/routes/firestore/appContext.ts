@@ -84,17 +84,17 @@ export function getAppContext() {
   return getContext('appContext') as AppContext
 }
 
-function makeAppContext() {
+function makeAppContext(basePath = "default/collections") {
   const loading = writable(true)
   if (browser) getRedirectResult(auth).then(() => loading.set(false))
-  const persons = makeCollectionStore<Person>(db, 'persons')
-  const _contents = makeCollectionStore<Content>(db, 'contents')
+  const persons = makeCollectionStore<Person>(db,  `${basePath}/persons`)
+  const _contents = makeCollectionStore<Content>(db, `${basePath}/contents`)
   const contents = {..._contents, add(values: Pick<Content, 'title' | 'text' | 'slug' | 'url'>){
     const {title, text, slug, url} = values
     _contents.add({title, text, slug, url});
 
   }}
-  const _edges = makeCollectionStore<Edge>(db, 'edges2')
+  const _edges = makeCollectionStore<Edge>(db, `${basePath}/edges`)
   const edges = {
     ..._edges,
     add({ parentId, childId }: { parentId: Topic['id']; childId: Topic['id'] }): Result {
@@ -104,7 +104,7 @@ function makeAppContext() {
       return { success: true }
     },
   }
-  const _topics = makeCollectionStore<Topic>(db, 'topics')
+  const _topics = makeCollectionStore<Topic>(db, `${basePath}/topics`)
   const topics = {
     ..._topics,
     del(id: Topic['id']) {
@@ -131,7 +131,7 @@ function makeAppContext() {
       return get(edges).filter((e) => e.parentId === id)
     },
   }
-  const _traits = makeCollectionStore<Trait>(db, 'traits2')
+  const _traits = makeCollectionStore<Trait>(db, `${basePath}/traits`)
   const traits = {..._traits
   ,
     add(values: Partial<Trait>) {
