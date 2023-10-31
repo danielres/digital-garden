@@ -33,6 +33,11 @@
 
       <div slot="fields">
         <label>
+          <span>Picture url</span>
+          <input type="text" class="textarea" name="picture" value={person.picture ?? ''} />
+        </label>
+
+        <label>
           <span>Description</span>
           <textarea class="textarea" name="body">{person.body ?? ''}</textarea>
         </label>

@@ -21,6 +21,11 @@
   </label>
 
   <label>
+    <span>Picture url</span>
+    <input type="text" class="textarea" name="picture" />
+  </label>
+
+  <label>
     <span>Description</span>
     <textarea class="textarea" name="body" />
   </label>
