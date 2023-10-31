@@ -1,9 +1,8 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { Toast, initializeStores } from '@skeletonlabs/skeleton'
-  import Tree from './components/Tree.svelte'
   import { getAppContext, setAppContext } from './appContext'
   import { paths } from './utils/navigation'
-  import { page } from '$app/stores'
 
   initializeStores()
   setAppContext()
@@ -15,6 +14,7 @@
     { name: 'Topics', url: paths.topics() },
     { name: 'Persons', url: paths.persons() },
     { name: 'Traits', url: paths.traits() },
+    { name: 'Contents', url: paths.contents() },
   ]
 </script>
 

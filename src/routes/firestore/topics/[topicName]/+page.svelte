@@ -9,7 +9,7 @@
   import { paths } from '../../utils/navigation'
   import { upperFirst } from '../../utils/string'
 
-  const { topics, traits, persons } = getAppContext()
+  const { topics, traits, persons, contents } = getAppContext()
 
   $: topicName = $page.params.topicName
   $: topic = $topics.find((t) => t.name === topicName)
@@ -22,6 +22,8 @@
     if (!topic) return
     topics.update(topic.id, values)
   }
+
+  let tab: string = 'person'
 </script>
 
 <div class="variant-ghost p-4">
@@ -49,9 +51,14 @@
             <div class="text-sm opacity-50">No description provided</div>
           {/if}
 
-          <div>
+          <div class="flex gap-2">
             {#each Object.keys(topicTraits) as targetKind}
-              <button class="btn btn-sm rounded variant-ghost-primary">
+              <button
+                class="btn btn-sm rounded {tab === targetKind
+                  ? 'variant-ghost-primary'
+                  : 'variant-ghost'}"
+                on:click={() => (tab = targetKind)}
+              >
                 {upperFirst(targetKind)}s
               </button>
             {/each}
@@ -60,7 +67,7 @@
           <ul class="grid gap-4">
             {#each Object.entries(topicTraits) as [targetKind, traits2]}
               {#each Object.entries(groupByKey(traits2, 'targetId')) as [targetId, traits]}
-                {#if targetKind === 'person'}
+                {#if tab === 'person'}
                   {@const person = $persons.find((p) => p.id === targetId)}
 
                   {#if person}
@@ -68,6 +75,28 @@
                       <h3 class="flex gap-2 items-center">
                         <Avatar src={person.picture} width="w-8" />
                         <a href={paths.persons(person.name)} class="clickable">{person.name}</a>
+                      </h3>
+
+                      <ul class="grid gap-1">
+                        {#each traits as trait}
+                          {@const topic = $topics.find((t) => trait.topicId === t.id)}
+
+                          <li class="px-4 py-2 variant-soft rounded-md">
+                            {trait.kind}: {trait.scale}
+                            <Markdown text={trait.text} />
+                          </li>
+                        {/each}
+                      </ul>
+                    </li>
+                  {/if}
+                {/if}
+                {#if tab === 'content'}
+                  {@const content = $contents.find((p) => p.id === targetId)}
+
+                  {#if content}
+                    <li class="space-y-2">
+                      <h3 class="flex gap-2 items-center">
+                        <a href={paths.contents(content.slug)} class="clickable">{content.title}</a>
                       </h3>
 
                       <ul class="grid gap-1">

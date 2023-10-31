@@ -1,10 +1,13 @@
-import type { Person, Topic, Trait } from '../appContext'
+import type { Person, Topic, Trait, Content } from '../appContext'
 
 const BASE_PATH = '/firestore'
 
 export const paths = {
   persons: (personName?: Person['name']) =>
     [BASE_PATH, 'persons', personName].filter(Boolean).join('/'),
+
+  contents: (contentSlug?: Content['slug']) =>
+    [BASE_PATH, 'contents', contentSlug].filter(Boolean).join('/'),
 
   topics: (topicName?: Topic['name']) => [BASE_PATH, 'topics', topicName].filter(Boolean).join('/'),
 

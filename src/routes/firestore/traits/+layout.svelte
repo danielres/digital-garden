@@ -2,8 +2,9 @@
   import { Avatar } from '@skeletonlabs/skeleton'
   import { getAppContext } from '../appContext'
   import { paths } from '../utils/navigation'
+  import { truncate } from '../utils/string'
 
-  const { traits, persons, topics } = getAppContext()
+  const { traits, persons, topics, contents } = getAppContext()
 </script>
 
 <div class="grid grid-cols-2 gap-8">
@@ -22,6 +23,22 @@
               <div>
                 <a href={paths.traits(trait.id)} class="clickable">
                   {person.name}
+                  -
+                  {topic.name}
+                </a>
+              </div>
+              <div>{trait.kind}: {trait.scale}</div>
+            {/if}
+          {/if}
+
+          {#if trait.targetKind === 'content'}
+            {@const content = $contents.find((p) => p.id === trait.targetId)}
+            {@const topic = $topics.find((t) => t.id === trait.topicId)}
+
+            {#if content && topic}
+              <div>
+                <a href={paths.traits(trait.id)} class="clickable">
+                  {truncate(content.title)}
                   -
                   {topic.name}
                 </a>

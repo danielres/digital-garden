@@ -41,14 +41,32 @@ export type Person = DbRecord & {
   picture: string
 }
 
-export type Trait = DbRecord & {
-  scale: number
-  targetKind: 'person'
-  targetId: Person['id']
-  topicId: Topic['id']
-  kind: 'interest' | 'expertise'
+export type Content = DbRecord & {
+  title: string
+  slug: string
   text: string
+  url: string
 }
+
+export type Trait = DbRecord &
+  (
+    | {
+        scale: number
+        targetKind: 'person'
+        targetId: Person['id']
+        topicId: Topic['id']
+        kind: 'interest' | 'expertise'
+        text: string
+      }
+    | {
+        scale: number
+        targetKind: 'content'
+        targetId: Content['id']
+        topicId: Topic['id']
+        kind: 'relevancy'
+        text: string
+      }
+  )
 
 type ErrorCode = 'EDGE_ALEARY_EXISTS' | 'TOPIC_ALREADY_EXISTS'
 export type Result = { success: true } | { success: false; code: ErrorCode }
@@ -70,6 +88,12 @@ function makeAppContext() {
   const loading = writable(true)
   if (browser) getRedirectResult(auth).then(() => loading.set(false))
   const persons = makeCollectionStore<Person>(db, 'persons')
+  const _contents = makeCollectionStore<Content>(db, 'contents')
+  const contents = {..._contents, add(values: Pick<Content, 'title' | 'text' | 'slug' | 'url'>){
+    const {title, text, slug, url} = values
+    _contents.add({title, text, slug, url});
+
+  }}
   const _edges = makeCollectionStore<Edge>(db, 'edges2')
   const edges = {
     ..._edges,
@@ -107,8 +131,16 @@ function makeAppContext() {
       return get(edges).filter((e) => e.parentId === id)
     },
   }
-  const traits = makeCollectionStore<Trait>(db, 'traits2')
+  const _traits = makeCollectionStore<Trait>(db, 'traits2')
+  const traits = {..._traits
+  ,
+    add(values: Partial<Trait>) {
+      if(values.targetKind === 'content')
+      values.kind = 'relevancy'
+      return _traits.add(values)
+    }
+  }
   const user = readonly(writable(auth?.currentUser ?? null, (set) => onAuthStateChanged(auth, set)))
   const signin = () => signInWithPopup(auth, googleAuthprovider)
-  return { user, persons, topics, edges, traits, auth: { ...auth, loading, signin } }
+  return { user, persons, topics, edges, traits, contents, auth: { ...auth, loading, signin } }
 }

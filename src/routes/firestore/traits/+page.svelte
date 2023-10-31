@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getAppContext, type Trait } from '../appContext'
 
-  const { persons, topics, traits } = getAppContext()
+  const { persons, topics, traits, contents } = getAppContext()
   type FormOnSubmitEvent = Event & { currentTarget: EventTarget & HTMLFormElement }
   type FormOnSubmit = (e: FormOnSubmitEvent) => void
 
@@ -21,6 +21,7 @@
     <span>Target kind</span>
     <select name="targetKind" class="select" bind:value={targetKind}>
       <option value="person">Person</option>
+      <option value="content">Content</option>
     </select>
   </label>
 
@@ -35,6 +36,17 @@
     </label>
   {/if}
 
+  {#if targetKind === 'content'}
+    <label>
+      <span>Content</span>
+      <select name="targetId" class="select">
+        {#each $contents as content}
+          <option value={content.id}>{content.title}</option>
+        {/each}
+      </select>
+    </label>
+  {/if}
+
   <label>
     <span>Topic</span>
     <select name="topicId" class="select">
@@ -44,23 +56,19 @@
     </select>
   </label>
 
-  <div>
-    <span>Kind</span>
-    <div class="flex gap-4 justify-center">
-      {#each ['interest', 'expertise'] as kind}
-        <label>
-          <span>{kind}</span>
-          <input
-            type="radio"
-            class="radio"
-            name="kind"
-            value={kind}
-            checked={kind === 'interest'}
-          />
-        </label>
-      {/each}
+  {#if targetKind === 'person'}
+    <div>
+      <span>Kind</span>
+      <div class="flex gap-4 justify-center">
+        {#each ['interest', 'expertise'] as kind}
+          <label>
+            <span>{kind}</span>
+            <input type="radio" class="radio" name="kind" value={kind} />
+          </label>
+        {/each}
+      </div>
     </div>
-  </div>
+  {/if}
 
   <div>
     <span>Scale</span>
