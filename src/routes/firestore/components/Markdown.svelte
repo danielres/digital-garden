@@ -7,5 +7,5 @@
 </script>
 
 <div class="prose-sm">
-  {@html md.render(text)}
+  {@html md.render(String(text))}
 </div>
