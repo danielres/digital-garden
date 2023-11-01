@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
-  import * as Icons from '../../Icons'
+  import * as Icons from '../Icons'
   import { getAppContext, type Edge, type Topic } from '../../appContext'
   import { onlyUnique } from '../../utils/array'
   import { upperFirst } from '../../utils/string'
