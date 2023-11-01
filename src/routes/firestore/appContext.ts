@@ -84,16 +84,12 @@ export function getAppContext() {
   return getContext('appContext') as AppContext
 }
 
-function makeAppContext(basePath = "default/collections") {
+function makeAppContext(basePath = 'default/collections') {
   const loading = writable(true)
   if (browser) getRedirectResult(auth).then(() => loading.set(false))
-  const persons = makeCollectionStore<Person>(db,  `${basePath}/persons`)
-  const _contents = makeCollectionStore<Content>(db, `${basePath}/contents`)
-  const contents = {..._contents, add(values: Pick<Content, 'title' | 'text' | 'slug' | 'url'>){
-    const {title, text, slug, url} = values
-    _contents.add({title, text, slug, url});
+  const persons = makeCollectionStore<Person>(db, `${basePath}/persons`)
+  const contents = makeCollectionStore<Content>(db, `${basePath}/contents`)
 
-  }}
   const _edges = makeCollectionStore<Edge>(db, `${basePath}/edges`)
   const edges = {
     ..._edges,
@@ -132,13 +128,12 @@ function makeAppContext(basePath = "default/collections") {
     },
   }
   const _traits = makeCollectionStore<Trait>(db, `${basePath}/traits`)
-  const traits = {..._traits
-  ,
+  const traits = {
+    ..._traits,
     add(values: Partial<Trait>) {
-      if(values.targetKind === 'content')
-      values.kind = 'relevancy'
+      if (values.targetKind === 'content') values.kind = 'relevancy'
       return _traits.add(values)
-    }
+    },
   }
   const user = readonly(writable(auth?.currentUser ?? null, (set) => onAuthStateChanged(auth, set)))
   const signin = () => signInWithPopup(auth, googleAuthprovider)
