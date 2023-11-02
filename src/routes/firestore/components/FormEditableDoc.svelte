@@ -17,7 +17,7 @@
 
 <div class="stack">
   <div class="grid gap-4">
-    <h2><slot name="title" /></h2>
+    <slot name="title" />
 
     {#if isEditing}
       <form on:submit|preventDefault={onSubmit} class="contents">
@@ -32,7 +32,7 @@
     {/if}
   </div>
 
-  <div class="justify-self-end">
+  <div class="justify-self-end self-start opacity-50 hover:opacity-80 text-sm">
     {#if isEditing}
       <button on:click={() => (isEditing = false)}>cancel</button>
     {:else}

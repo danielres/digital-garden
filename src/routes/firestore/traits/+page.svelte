@@ -1,5 +1,7 @@
 <script lang="ts">
   import { getAppContext, type Trait } from '../appContext'
+  import { nestedify } from '../utils/forms'
+  import FormFields from './[traitId]/FormFields.svelte'
 
   const { persons, topics, traits, contents } = getAppContext()
   type FormOnSubmitEvent = Event & { currentTarget: EventTarget & HTMLFormElement }
@@ -9,8 +11,9 @@
     const formEl = e.currentTarget
     const formData = new FormData(formEl)
     const values = Object.fromEntries(formData) as Record<string, string>
-    traits.add(values)
-    // formEl.reset()
+    const v = nestedify(values)
+    traits.add(v)
+    formEl.reset()
   }
 
   let targetKind: Trait['targetKind'] = 'person'
@@ -34,6 +37,8 @@
         {/each}
       </select>
     </label>
+
+    <FormFields levels={{ interest: 3, expertise: 3 }} />
   {/if}
 
   {#if targetKind === 'content'}
@@ -45,42 +50,9 @@
         {/each}
       </select>
     </label>
+
+    <FormFields levels={{ relevancy: 3 }} />
   {/if}
-
-  <label>
-    <span>Topic</span>
-    <select name="topicId" class="select">
-      {#each $topics as topic}
-        <option value={topic.id}>{topic.name}</option>
-      {/each}
-    </select>
-  </label>
-
-  {#if targetKind === 'person'}
-    <div>
-      <span>Kind</span>
-      <div class="flex gap-4 justify-center">
-        {#each ['interest', 'expertise'] as kind}
-          <label>
-            <span>{kind}</span>
-            <input type="radio" class="radio" name="kind" value={kind} />
-          </label>
-        {/each}
-      </div>
-    </div>
-  {/if}
-
-  <div>
-    <span>Scale</span>
-    <div class="flex gap-4 justify-center">
-      {#each [0, 1, 2, 3, 4, 5] as v}
-        <label>
-          <span>{v}</span>
-          <input type="radio" class="radio" name="scale" value={v} checked={v === 3} />
-        </label>
-      {/each}
-    </div>
-  </div>
 
   <button class="btn variant-ghost-primary rounded" type="submit">Add new trait</button>
 </form>

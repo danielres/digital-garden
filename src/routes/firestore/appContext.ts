@@ -48,25 +48,28 @@ export type Content = DbRecord & {
   url: string
 }
 
-export type Trait = DbRecord &
-  (
-    | {
-        scale: number
-        targetKind: 'person'
-        targetId: Person['id']
-        topicId: Topic['id']
-        kind: 'interest' | 'expertise'
-        text: string
-      }
-    | {
-        scale: number
-        targetKind: 'content'
-        targetId: Content['id']
-        topicId: Topic['id']
-        kind: 'relevancy'
-        text: string
-      }
-  )
+export type PersonTrait = DbRecord & {
+  targetKind: 'person'
+  targetId: Person['id']
+  topicId: Topic['id']
+  text: string
+  levels: {
+    interest: number
+    expertise: number
+  }
+}
+
+export type ContentTrait = DbRecord & {
+  targetKind: 'content'
+  targetId: Content['id']
+  topicId: Topic['id']
+  text: string
+  levels: {
+    relevancy: number
+  }
+}
+
+export type Trait = PersonTrait | ContentTrait
 
 type ErrorCode = 'EDGE_ALEARY_EXISTS' | 'TOPIC_ALREADY_EXISTS'
 export type Result = { success: true } | { success: false; code: ErrorCode }
@@ -130,10 +133,6 @@ function makeAppContext(basePath = 'default/collections') {
   const _traits = makeCollectionStore<Trait>(db, `${basePath}/traits`)
   const traits = {
     ..._traits,
-    add(values: Partial<Trait>) {
-      if (values.targetKind === 'content') values.kind = 'relevancy'
-      return _traits.add(values)
-    },
   }
   const user = readonly(writable(auth?.currentUser ?? null, (set) => onAuthStateChanged(auth, set)))
   const signin = () => signInWithPopup(auth, googleAuthprovider)

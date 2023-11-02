@@ -1,67 +1,66 @@
 <script lang="ts">
+  import FormFields from './FormFields.svelte'
   import { page } from '$app/stores'
-  import { getAppContext, type Trait } from '../../appContext'
+  import { Avatar } from '@skeletonlabs/skeleton'
+  import { getAppContext } from '../../appContext'
   import FormEditableDoc from '../../components/FormEditableDoc.svelte'
   import Markdown from '../../components/Markdown.svelte'
+  import TraitLevels from '../../components/TraitLevels.svelte'
+  import { nestedify } from '../../utils/forms'
   import { paths } from '../../utils/navigation'
+  import { truncate, upperFirst } from '../../utils/string'
+  import * as Icons from '../../components/Icons'
 
-  const { persons, traits, topics } = getAppContext()
+  const { persons, traits, topics, contents } = getAppContext()
 
   $: traitId = $page.params.traitId
   $: trait = $traits.find((t) => t.id === traitId)
-  $: person = $persons.find((p) => p.id === trait?.targetId)
   $: topic = $topics.find((t) => t.id === trait?.topicId)
 
-  const handleUpdate = (values: Partial<Trait>) => {
+  const handleUpdate = (values: Record<string, string>) => {
     if (!trait) return
+    const v = nestedify(values)
     traits.update(trait.id, values)
   }
 </script>
 
-{#if trait && person && topic}
-  {#key trait}
-    <FormEditableDoc {handleUpdate}>
-      <div slot="title">
-        <h2>
-          <div>
-            <a href={paths.persons(person.name)} class="clickable">{person.name}</a>
-            -
-            <a href={paths.topics(topic.name)} class="clickable">{topic.name}</a>
-          </div>
-          <div class="text-sm opacity-50">{trait.kind}: {trait.scale}</div>
-        </h2>
-      </div>
-
-      <div slot="fields">
-        <label>
-          <span>Description</span>
-          <textarea class="textarea" name="text">{trait.text ?? ''}</textarea>
-        </label>
-
-        <div>
-          <span>Scale</span>
-          <div class="flex gap-4 justify-center">
-            {#each [0, 1, 2, 3, 4, 5] as v}
-              <label>
-                <span>{v}</span>
-                <input type="radio" class="radio" name="scale" value={v} checked={v === 3} />
-              </label>
-            {/each}
-          </div>
-        </div>
-      </div>
-
-      <div slot="content">
-        {#if trait.text}
-          <Markdown text={trait.text} />
-        {:else}
-          <div class="text-sm opacity-50">No description provided</div>
+{#if trait && topic}
+  <FormEditableDoc {handleUpdate}>
+    <svelte:fragment slot="title">
+      {#if trait.targetKind === 'person'}
+        {@const person = $persons.find((p) => p.id === trait?.targetId)}
+        {#if person}
+          <a href={paths.persons(person.name)} class="clickable inline-flex gap-2 items-center">
+            <Avatar src={person.picture} width="w-8" />
+            {person.name}
+          </a>
         {/if}
-      </div>
+      {/if}
 
-      <div slot="buttonText">Update trait</div>
-    </FormEditableDoc>
-  {/key}
+      {#if trait.targetKind === 'content'}
+        {@const content = $contents.find((p) => p.id === trait?.targetId)}
+        {#if content}
+          <a href={paths.contents(content.slug)} class="clickable inline-flex gap-2 items-center">
+            <Icons.Link class="w-8 p-1 bg-primary-500 text-primary-900 rounded-sm" />
+            {truncate(content.title)}
+          </a>
+        {/if}
+      {/if}
+      -
+      <a href={paths.topics(topic.name)} class="clickable">{topic.name}</a>
+    </svelte:fragment>
+
+    <svelte:fragment slot="fields">
+      <FormFields text={trait.text} levels={trait.levels} {topic} />
+    </svelte:fragment>
+
+    <svelte:fragment slot="content">
+      <TraitLevels {trait} />
+      <Markdown text={trait.text} />
+    </svelte:fragment>
+
+    <svelte:fragment slot="buttonText">Update trait</svelte:fragment>
+  </FormEditableDoc>
 {:else}
   <div>
     Trait "{traitId}" not found.

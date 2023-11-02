@@ -1,128 +1,52 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { Avatar } from '@skeletonlabs/skeleton'
-  import { groupByKey } from '../../../tagtree2/utils/object'
-  import { getAppContext, type Trait } from '../../appContext'
+  import { getAppContext } from '../../appContext'
   import FormEditableDoc from '../../components/FormEditableDoc.svelte'
   import Markdown from '../../components/Markdown.svelte'
-  import { extractNestedInputs } from '../../utils/forms'
+  import TraitItem from '../../components/TraitItem.svelte'
+  import TraitLevels from '../../components/TraitLevels.svelte'
+  import { nestedify } from '../../utils/forms'
   import { paths } from '../../utils/navigation'
-  import { upperFirst } from '../../utils/string'
+  import FormFields from '../FormFields.svelte'
+  import PersonHead from './PersonHead.svelte'
 
   const { persons, traits, topics } = getAppContext()
 
   $: personName = $page.params.personName
   $: person = $persons.find((p) => p.name === personName)
-  $: personTraits = groupByKey(
-    $traits.filter((t) => t.targetKind === 'person' && t.targetId === person?.id),
-    'kind'
-  )
+  $: personTraits = $traits.filter((t) => t.targetKind === 'person' && t.targetId === person?.id)
 
   const handleUpdate = (values: Record<string, string>) => {
     if (!person) return
-    const { traits: traitsValues, ...personValues } = extractNestedInputs(values)
-
-    Object.entries(traitsValues).forEach(([id, values]) => {
-      const { text, scale } = values as Partial<Trait>
-      const existingTrait = $traits.find((t) => t.id === id)
-      if (existingTrait?.text === text && existingTrait?.scale === scale) return
-      traits.update(id, { text, scale })
-    })
-
+    const { traits: traitsValues, ...personValues } = nestedify(values)
     persons.update(person.id, personValues)
+    if (traitsValues)
+      Object.entries(traitsValues).forEach(([id, values]) => traits.update(id, values))
   }
 </script>
 
 {#if person}
-  {#key person}
-    <FormEditableDoc {handleUpdate}>
-      <div slot="title" class="flex items-center gap-2">
-        <Avatar src={person.picture} width="w-12" initials={person.name} />
-        {person.name}
-      </div>
+  <FormEditableDoc {handleUpdate}>
+    <svelte:fragment slot="title">
+      <PersonHead {person} />
+    </svelte:fragment>
 
-      <svelte:fragment slot="fields">
-        <label>
-          <span>Picture url</span>
-          <input type="text" class="textarea" name="picture" value={person.picture ?? ''} />
-        </label>
+    <svelte:fragment slot="content">
+      <Markdown text={person.body} />
 
-        <label>
-          <span>Description</span>
-          <textarea class="textarea" name="body">{person.body ?? ''}</textarea>
-        </label>
+      {#each personTraits as trait}
+        <TraitItem {trait} />
+      {/each}
+    </svelte:fragment>
 
-        <fieldset name="traits">
-          {#each Object.entries(personTraits) as [kind, traits]}
-            <div>
-              <h3>{upperFirst(kind)}</h3>
+    <svelte:fragment slot="fields">
+      <FormFields {person} />
+    </svelte:fragment>
 
-              <ul class="grid gap-1">
-                {#each traits as trait}
-                  {@const topic = $topics.find((t) => trait.topicId === t.id)}
-
-                  {#if topic}
-                    <li class="px-4 py-2 variant-soft rounded-md grid gap-2">
-                      <div class="flex gap-2">
-                        <a class="clickable" href={paths.topics(topic.name)}>{topic.name}</a>
-                        :
-                        <input
-                          class="textarea p-0 w-4 text-center"
-                          type="text"
-                          name="traits[{trait.id}][scale]"
-                          value={trait.scale}
-                        />
-                      </div>
-
-                      <div>
-                        <!-- prettier-ignore -->
-                        <textarea class="textarea" name="traits[{trait.id}][text]">{trait.text ?? ''}</textarea>
-                      </div>
-                    </li>
-                  {/if}
-                {/each}
-              </ul>
-            </div>
-          {/each}
-        </fieldset>
-      </svelte:fragment>
-
-      <div slot="content" class="grid gap-4">
-        {#if person.body}
-          <Markdown text={person.body} />
-        {:else}
-          <div class="text-sm opacity-50">No description provided</div>
-        {/if}
-
-        {#each Object.entries(personTraits) as [kind, traits]}
-          <div>
-            <h3>{upperFirst(kind)}</h3>
-
-            <ul class="grid gap-1">
-              {#each traits as trait}
-                {@const topic = $topics.find((t) => trait.topicId === t.id)}
-
-                {#if topic}
-                  <li class="px-4 py-2 variant-soft rounded-md">
-                    <a class="clickable" href={paths.topics(topic.name)}>{topic.name}</a>
-                    : {trait.scale}
-
-                    <div>
-                      <Markdown text={trait.text} />
-                    </div>
-                  </li>
-                {/if}
-              {/each}
-            </ul>
-          </div>
-        {/each}
-      </div>
-
-      <div slot="buttonText">Update person</div>
-    </FormEditableDoc>
-  {/key}
+    <svelte:fragment slot="buttonText">Update person</svelte:fragment>
+  </FormEditableDoc>
 {:else}
   <div>
-    Person {personName} not found.
+    Person "{personName}" not found.
   </div>
 {/if}

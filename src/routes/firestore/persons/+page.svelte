@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getAppContext } from '../appContext'
+  import FormFields from './FormFields.svelte'
 
   const { persons } = getAppContext()
   type FormOnSubmitEvent = Event & { currentTarget: EventTarget & HTMLFormElement }
@@ -8,27 +9,24 @@
   const onSubmitPerson: FormOnSubmit = (e) => {
     const formEl = e.currentTarget
     const formData = new FormData(formEl)
-    const { name, body } = Object.fromEntries(formData) as Record<string, string>
-    persons.add({ name, body })
+    const values = Object.fromEntries(formData) as Record<string, string>
+    persons.add(values)
     formEl.reset()
+  }
+
+  function randomBetween(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
   }
 </script>
 
 <form class="space-y-4" on:submit|preventDefault={onSubmitPerson}>
-  <label>
-    <span>Name</span>
-    <input class="textarea" type="text" name="name" />
-  </label>
-
-  <label>
-    <span>Picture url</span>
-    <input type="text" class="textarea" name="picture" />
-  </label>
-
-  <label>
-    <span>Description</span>
-    <textarea class="textarea" name="body" />
-  </label>
+  <FormFields
+    person={{
+      body: '',
+      name: '',
+      picture: `https://i.pravatar.cc/150?img=${randomBetween(1, 70)}`,
+    }}
+  />
 
   <button class="btn variant-ghost-primary rounded" type="submit">Add new Person</button>
 </form>

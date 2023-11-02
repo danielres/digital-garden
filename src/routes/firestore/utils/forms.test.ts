@@ -1,31 +1,33 @@
 import { describe, it, expect } from 'vitest'
-import { extractNestedInputs } from './forms'
+import { nestedify } from './forms'
 
-const input = {
-  picture: 'http://...',
-  body: 'Lorem',
-  'traits[ID1][text]': 'one',
-  'traits[ID2][text]': 'two',
-  'traits[ID3][text]': 'three',
-  'traits[ID4][text]': 'four',
-  'other[XYZ][property]': 'value',
-}
+describe('forms.nestedify()', () => {
+  const input = {
+    targetKind: 'person',
+    targetId: 'targetId',
+    topicId: 'topicId',
+    text: '',
+    'levels.interest': '3',
+    'levels.expertise': '3',
+    'deep.nested.value': 'deepnestedvalue',
+  }
 
-describe('forms.extractNestedInputs', () => {
-  it('', () => {
-    const actual = extractNestedInputs(input)
+  it('Converts an object with dot-delimited keys into a nested object structure', () => {
+    const actual = nestedify(input)
 
     const expected = {
-      picture: 'http://...',
-      body: 'Lorem',
-      traits: {
-        ID1: { text: 'one' },
-        ID2: { text: 'two' },
-        ID3: { text: 'three' },
-        ID4: { text: 'four' },
+      targetKind: 'person',
+      targetId: 'targetId',
+      topicId: 'topicId',
+      text: '',
+      levels: {
+        interest: 3,
+        expertise: 3,
       },
-      other: {
-        XYZ: { property: 'value' },
+      deep: {
+        nested: {
+          value: 'deepnestedvalue',
+        },
       },
     }
 

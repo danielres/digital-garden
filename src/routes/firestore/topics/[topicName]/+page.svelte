@@ -1,125 +1,73 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { Avatar } from '@skeletonlabs/skeleton'
-  import { groupByKey } from '../../../tagtree2/utils/object'
   import { getAppContext, type Topic } from '../../appContext'
   import FormEditableDoc from '../../components/FormEditableDoc.svelte'
   import Markdown from '../../components/Markdown.svelte'
+  import TraitItem from '../../components/TraitItem.svelte'
+  import { onlyUnique } from '../../utils/array'
   import { renderDate } from '../../utils/date'
-  import { paths } from '../../utils/navigation'
   import { upperFirst } from '../../utils/string'
 
-  const { topics, traits, persons, contents } = getAppContext()
+  const { topics, traits } = getAppContext()
 
   $: topicName = $page.params.topicName
   $: topic = $topics.find((t) => t.name === topicName)
-  $: topicTraits = groupByKey(
-    $traits.filter((t) => t.topicId === topic?.id),
-    'targetKind'
-  )
+  $: topicTraits = $traits.filter((t) => t.topicId === topic?.id)
 
   const handleUpdate = (values: Partial<Topic>) => {
     if (!topic) return
     topics.update(topic.id, values)
   }
 
-  let tab: string = 'person'
+  $: tab = topicTraits[0]?.targetKind ?? 'person'
 </script>
 
 <div class="variant-ghost p-4">
   {#if topic}
-    {#key topic}
-      <FormEditableDoc {handleUpdate}>
-        <div slot="title">
-          <h2>Topic: {topic.name}</h2>
-          <div class="text-sm opacity-50 font-normal">
-            Added on {renderDate(topic.createdAt.toDate())}
-          </div>
+    <FormEditableDoc {handleUpdate}>
+      <div slot="title">
+        <h2>Topic: {topic.name}</h2>
+        <div class="text-sm opacity-50 font-normal">
+          Added on {renderDate(topic.createdAt.toDate())}
+        </div>
+      </div>
+
+      <div slot="fields">
+        <label>
+          <span>Description</span>
+          <textarea class="textarea" name="text">{topic.text ?? ''}</textarea>
+        </label>
+      </div>
+
+      <div slot="content" class="grid gap-4">
+        {#if topic.text}
+          <Markdown text={topic.text} />
+        {:else}
+          <div class="text-sm opacity-50">No description provided</div>
+        {/if}
+
+        <div class="flex gap-2">
+          {#each topicTraits.map((t) => t.targetKind).filter(onlyUnique) as targetKind}
+            <button
+              class="btn btn-sm rounded"
+              class:variant-ghost-primary={tab === targetKind}
+              class:variant-ghost={tab !== targetKind}
+              on:click={() => (tab = targetKind)}
+            >
+              {upperFirst(targetKind)}s
+            </button>
+          {/each}
         </div>
 
-        <div slot="fields">
-          <label>
-            <span>Description</span>
-            <textarea class="textarea" name="text">{topic.text ?? ''}</textarea>
-          </label>
-        </div>
+        <ul class="grid gap-2">
+          {#each topicTraits.filter((t) => t.targetKind === tab) as trait}
+            <TraitItem {trait} />
+          {/each}
+        </ul>
+      </div>
 
-        <div slot="content" class="grid gap-4">
-          {#if topic.text}
-            <Markdown text={topic.text} />
-          {:else}
-            <div class="text-sm opacity-50">No description provided</div>
-          {/if}
-
-          <div class="flex gap-2">
-            {#each Object.keys(topicTraits) as targetKind}
-              <button
-                class="btn btn-sm rounded {tab === targetKind
-                  ? 'variant-ghost-primary'
-                  : 'variant-ghost'}"
-                on:click={() => (tab = targetKind)}
-              >
-                {upperFirst(targetKind)}s
-              </button>
-            {/each}
-          </div>
-
-          <ul class="grid gap-4">
-            {#each Object.entries(topicTraits) as [targetKind, traits2]}
-              {#each Object.entries(groupByKey(traits2, 'targetId')) as [targetId, traits]}
-                {#if tab === 'person'}
-                  {@const person = $persons.find((p) => p.id === targetId)}
-
-                  {#if person}
-                    <li class="space-y-2">
-                      <h3 class="flex gap-2 items-center">
-                        <Avatar src={person.picture} width="w-8" />
-                        <a href={paths.persons(person.name)} class="clickable">{person.name}</a>
-                      </h3>
-
-                      <ul class="grid gap-1">
-                        {#each traits as trait}
-                          {@const topic = $topics.find((t) => trait.topicId === t.id)}
-
-                          <li class="px-4 py-2 variant-soft rounded-md">
-                            {trait.kind}: {trait.scale}
-                            <Markdown text={trait.text} />
-                          </li>
-                        {/each}
-                      </ul>
-                    </li>
-                  {/if}
-                {/if}
-                {#if tab === 'content'}
-                  {@const content = $contents.find((p) => p.id === targetId)}
-
-                  {#if content}
-                    <li class="space-y-2">
-                      <h3 class="flex gap-2 items-center">
-                        <a href={paths.contents(content.slug)} class="clickable">{content.title}</a>
-                      </h3>
-
-                      <ul class="grid gap-1">
-                        {#each traits as trait}
-                          {@const topic = $topics.find((t) => trait.topicId === t.id)}
-
-                          <li class="px-4 py-2 variant-soft rounded-md">
-                            {trait.kind}: {trait.scale}
-                            <Markdown text={trait.text} />
-                          </li>
-                        {/each}
-                      </ul>
-                    </li>
-                  {/if}
-                {/if}
-              {/each}
-            {/each}
-          </ul>
-        </div>
-
-        <div slot="buttonText">Update person</div>
-      </FormEditableDoc>
-    {/key}
+      <div slot="buttonText">Update topic</div>
+    </FormEditableDoc>
   {:else}
     <div>
       Topic {topicName} not found.

@@ -9,15 +9,13 @@
 
   import * as Icon from '../../components/Icons'
   import { renderDate } from '../../utils/date'
+  import TraitItem from '../../components/TraitItem.svelte'
 
   const { contents, traits, topics } = getAppContext()
 
   $: contentSlug = $page.params.contentSlug
   $: content = $contents.find((p) => p.slug === contentSlug)
-  $: contentTraits = groupByKey(
-    $traits.filter((t) => t.targetKind === 'content' && t.targetId === content?.id),
-    'kind'
-  )
+  $: contentTraits = $traits.filter((t) => t.targetKind === 'content' && t.targetId === content?.id)
 
   const handleUpdate = (values: Partial<Content>) => {
     if (!content) return
@@ -33,6 +31,7 @@
           {renderDate(content.createdAt.toDate())}
         </div>
         <div>{content.title}</div>
+
         {#if content.url}
           <div
             class="text-sm font-normal underline underline-offset-4 opacity-50 hover:opacity-100"
@@ -59,30 +58,11 @@
           <div class="text-sm opacity-50">No description provided</div>
         {/if}
 
-        {#each Object.entries(contentTraits) as [kind, traits]}
-          <div>
-            <h3>{upperFirst(kind)}</h3>
-
-            <ul class="grid gap-1">
-              {#each traits as trait, i}
-                {@const topic = $topics.find((t) => trait.topicId === t.id)}
-
-                {#if topic}
-                  <li class="px-4 py-2 variant-soft rounded-md">
-                    <a class="clickable" href={paths.topics(topic.name)}>{topic.name}</a>
-                    : {trait.scale}
-
-                    <!--
-                      <div>
-                        <Markdown text={trait.text} />
-                      </div>
-                    -->
-                  </li>
-                {/if}
-              {/each}
-            </ul>
-          </div>
-        {/each}
+        <ul class="grid gap-1">
+          {#each contentTraits as trait}
+            <TraitItem {trait} />
+          {/each}
+        </ul>
       </div>
 
       <div slot="buttonText">Update content</div>
