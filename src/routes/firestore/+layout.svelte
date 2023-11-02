@@ -2,6 +2,7 @@
   import { page } from '$app/stores'
   import { Toast, initializeStores } from '@skeletonlabs/skeleton'
   import { getAppContext, setAppContext } from './appContext'
+  import * as Icons from './components/Icons'
   import { paths } from './utils/navigation'
 
   initializeStores()
@@ -11,10 +12,10 @@
   const { loading } = auth
 
   const tabs = [
-    { name: 'Topics', url: paths.topics() },
-    { name: 'Persons', url: paths.persons() },
-    { name: 'Traits', url: paths.traits() },
-    { name: 'Contents', url: paths.contents() },
+    { name: 'Topics', url: paths.topics(), icon: Icons.BookmarkMini },
+    { name: 'Persons', url: paths.persons(), icon: Icons.UserMini },
+    { name: 'Contents', url: paths.contents(), icon: Icons.DocumentTextMini },
+    { name: 'Traits', url: paths.traits(), icon: Icons.PaperClipMini },
   ]
 </script>
 
@@ -44,11 +45,12 @@
     <div class="flex gap-2">
       {#each tabs as tab}
         <a
-          class="btn btn-sm rounded px-4 py-2 {$page.url.pathname.startsWith(tab.url)
-            ? 'variant-ghost-primary'
-            : 'variant-ghost'} "
+          class="btn btn-sm rounded px-4 py-2 flex gap-1 items-center"
+          class:variant-ghost-primary={$page.url.pathname.startsWith(tab.url)}
+          class:variant-ghost={!$page.url.pathname.startsWith(tab.url)}
           href={tab.url}
         >
+          <svelte:component this={tab.icon} />
           {tab.name}
         </a>
       {/each}
