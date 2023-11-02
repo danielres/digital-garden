@@ -1,6 +1,6 @@
 <script lang="ts">
   import { twMerge } from 'tailwind-merge'
-  let _class: string
+  let _class = ''
   export { _class as class }
 </script>
 
