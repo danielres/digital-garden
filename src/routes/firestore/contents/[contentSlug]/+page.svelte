@@ -60,7 +60,7 @@
 
         <ul class="grid gap-1">
           {#each contentTraits as trait}
-            <TraitItem {trait} />
+            <TraitItem {trait} from="target" />
           {/each}
         </ul>
       </div>

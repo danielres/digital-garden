@@ -35,7 +35,7 @@
       <Markdown text={person.body} />
 
       {#each personTraits as trait}
-        <TraitItem {trait} />
+        <TraitItem {trait} from="target" />
       {/each}
     </svelte:fragment>
 

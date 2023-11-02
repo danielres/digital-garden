@@ -8,7 +8,7 @@
 <div class="grid grid-cols-2 gap-8">
   <div class="space-y-2">
     {#each $traits as trait}
-      <TraitItem {trait} />
+      <TraitItem {trait} from="trait" />
     {/each}
   </div>
 

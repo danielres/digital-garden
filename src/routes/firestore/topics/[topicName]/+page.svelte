@@ -61,7 +61,7 @@
 
         <ul class="grid gap-2">
           {#each topicTraits.filter((t) => t.targetKind === tab) as trait}
-            <TraitItem {trait} />
+            <TraitItem {trait} from="topic" />
           {/each}
         </ul>
       </div>

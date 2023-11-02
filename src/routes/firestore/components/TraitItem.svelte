@@ -10,45 +10,56 @@
 
   export let trait: Trait
 
-  let _class = 'variant-glass-surface px-3 py-4'
+  let _class = 'variant-glass-surface px-3 py-4 stack'
   export { _class as class }
 
   const { traits, persons, topics, contents } = getAppContext()
   const topic = $topics.find((t) => t.id === trait.topicId)
+
+  export let from: 'target' | 'topic' | 'trait'
+
+  $: target =
+    trait.targetKind === 'person'
+      ? $persons.find((p) => p.id === trait.targetId)
+      : trait.targetKind === 'content'
+      ? $contents.find((p) => p.id === trait.targetId)
+      : null
 </script>
 
 <div class={_class}>
-  <div class="float-right">
-    <ButtonDelete on:click={() => traits.del(trait.id)} />
+  <div>
+    <div class="grid grid-cols-[auto_1fr]">
+      {#if target && topic}
+        <div class="col1">
+          {#if from === 'topic' || from === 'trait'}
+            {#if trait.targetKind === 'person' && 'picture' in target}
+              <Avatar src={target.picture} width="w-8 mr-4" />
+            {:else if trait.targetKind === 'content'}
+              <Icons.DocumentTextMini class="w-8 mr-4 p-2 variant-glass rounded-full" />
+            {/if}
+          {:else if from === 'target'}
+            <Icons.BookmarkMini class="w-8 mr-4 p-2 variant-glass rounded-full" />
+          {/if}
+        </div>
+
+        <div class="col2">
+          <a href={paths.traits(trait.id)} class="clickable">
+            {#if from !== 'target'}
+              {@const text = 'name' in target ? target.name : 'title' in target ? target.title : ''}
+              {truncate(text)}
+            {/if}
+            {#if from === 'trait'}-{/if}
+            {#if from !== 'topic'}{topic.name}{/if}
+          </a>
+          <TraitLevels {trait} />
+
+          <Markdown text={trait.text} />
+        </div>
+      {/if}
+    </div>
   </div>
 
-  {#if trait.targetKind === 'person'}
-    {@const person = $persons.find((p) => p.id === trait.targetId)}
-    {#if person && topic}
-      <div class="float-left"><Avatar src={person.picture} width="w-8" /></div>
-
-      <a href={paths.traits(trait.id)} class="clickable ml-4">
-        {person.name} - {topic.name}
-      </a>
-    {/if}
-  {/if}
-
-  {#if trait.targetKind === 'content'}
-    {@const content = $contents.find((p) => p.id === trait.targetId)}
-    {#if content && topic}
-      <div class="float-left">
-        <Icons.Link class="w-8 p-1 bg-primary-500 text-primary-900 rounded-sm" />
-      </div>
-
-      <a href={paths.traits(trait.id)} class="clickable ml-4">
-        {truncate(content.title)} - {topic.name}
-      </a>
-    {/if}
-  {/if}
-
-  <div class="ml-12">
-    <TraitLevels {trait} />
-
-    <Markdown text={trait.text} />
+  <div class="self-start justify-self-end">
+    <ButtonDelete on:click={() => traits.del(trait.id)} />
   </div>
 </div>
