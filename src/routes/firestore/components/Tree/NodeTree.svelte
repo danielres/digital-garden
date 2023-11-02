@@ -1,19 +1,19 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
-  import * as Icons from '../Icons'
   import { getAppContext, type Edge, type Topic } from '../../appContext'
   import { onlyUnique } from '../../utils/array'
   import { upperFirst } from '../../utils/string'
+  import * as Icons from '../Icons'
   import { getTreeContext } from './treeContext'
 
   export let depth = 0
   export let nodeId = 'root'
   export let parentId = 'root'
+  export let maxDepth = 10
 
   const dispatch = createEventDispatcher()
 
-  const maxDepth = 5
   const { topics: nodes, edges } = getAppContext()
   const { mode } = getTreeContext()
 
@@ -47,25 +47,26 @@
     })
   }
 
-  async function delay(ms = 100) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-  }
-
   let randomKey = Math.random()
   const setRandomKey = () => (randomKey = Math.random())
 </script>
 
 {#if depth === 0}
   <ul>
-    <svelte:self on:nodeClicked on:newNode on:copy on:move on:delete {nodeId} depth={depth + 1} />
+    <svelte:self on:newNode on:copy on:move on:delete {nodeId} depth={depth + 1}>
+      <slot slot="nodeItem" name="nodeItem" let:data {data} />
+    </svelte:self>
   </ul>
 {:else}
-  {@const nodeValue = $nodes.find((n) => n.id === nodeId)?.name}
+  {@const node = $nodes.find((n) => n.id === nodeId)}
+  {@const nodeValue = node?.name}
 
   <li
     data-parent-id={parentId}
     data-id={nodeId}
-    on:drop|preventDefault|stopPropagation={(e) => onDrop(e, nodeId)}
+    on:drop|preventDefault|stopPropagation={['move', 'copy'].includes($mode.type)
+      ? (e) => onDrop(e, nodeId)
+      : null}
     on:dragover|preventDefault
     on:dragstart|self={onDragStart}
     draggable={['move', 'copy'].includes($mode.type) && depth > 1}
@@ -85,13 +86,15 @@
       </span>
     {:else}
       <div class="flex items-center gap-1">
-        <button
-          on:click={() => dispatch('nodeClicked', { nodeId, nodeValue })}
-          class="clickable flex items-center gap-1 hover:text-white"
-        >
-          <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
-          {nodeValue}
-        </button>
+        <span class="opacity-50 -mt-2"><Icons.TreeAngle /></span>
+
+        {#if $mode.type === 'view'}
+          <slot name="nodeItem" data={{ node }}>
+            <span>{nodeValue}</span>
+          </slot>
+        {:else}
+          <span>{nodeValue}</span>
+        {/if}
 
         {#if $mode.type === 'add'}
           <button
@@ -164,7 +167,6 @@
         {/if}
         {#each $edges.filter((e) => e.parentId === nodeId) as edge}
           <svelte:self
-            on:nodeClicked
             on:newNode
             on:copy
             on:move
@@ -172,7 +174,9 @@
             nodeId={edge.childId}
             depth={depth + 1}
             parentId={edge.parentId}
-          />
+          >
+            <slot slot="nodeItem" name="nodeItem" let:data {data} />
+          </svelte:self>
         {/each}
       </ul>
     {/if}
