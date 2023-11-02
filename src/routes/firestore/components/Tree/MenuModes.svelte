@@ -9,6 +9,17 @@
     <input
       class="radio"
       type="radio"
+      value={'view'}
+      on:click={() => ($mode = { type: 'view' })}
+      checked={$mode.type === 'view'}
+    />
+    <span>View</span>
+  </label>
+
+  <label>
+    <input
+      class="radio"
+      type="radio"
       value={'move'}
       on:click={() => ($mode = { type: 'move' })}
       checked={$mode.type === 'move'}

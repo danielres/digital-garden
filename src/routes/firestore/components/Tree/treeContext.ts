@@ -2,6 +2,7 @@ import { getContext, setContext } from 'svelte'
 import { writable, type Writable } from 'svelte/store'
 
 export type Mode =
+  | { type: 'view' }
   | { type: 'move' }
   | { type: 'copy' }
   | { type: 'add' }
@@ -13,7 +14,7 @@ type TreeContext = {
 }
 
 export function setTreeContext() {
-  const mode = writable<Mode>({ type: 'move' })
+  const mode = writable<Mode>({ type: 'view' })
   const context: TreeContext = { mode }
   setContext('treeContext', context)
 }
