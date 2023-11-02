@@ -48,6 +48,7 @@
   setTreeContext()
 
   function getOccurences(topic: Topic) {
+    if (!topic) return {}
     const topicTraits = $traits.filter((t) => t.topicId === topic.id)
     return countOccurrences(topicTraits.map((t) => t.targetKind))
   }
@@ -58,8 +59,8 @@
 
   <NodeTree on:copy={onCopy} on:move={onMove} on:newNode={onNewNode} on:delete={onDelete}>
     <span slot="nodeItem" let:data class="flex items-center gap-2">
-      <a class="flex items-center clickable" href={paths.topics(data.node.name)}>
-        {data.node.name}
+      <a class="flex items-center clickable" href={paths.topics(data?.node?.name)}>
+        {data?.node?.name}
       </a>
 
       <div class="flex items-center gap-1 pt-1">
