@@ -1,25 +1,32 @@
 <script lang="ts">
   import { getAppContext } from '../appContext'
+  import * as Icons from '../components/Icons'
+  import Item from '../components/Item.svelte'
+  import Shell2Cols from '../components/Shell2Cols.svelte'
   import { paths } from '../utils/navigation'
 
   const { contents } = getAppContext()
+  const targetIconClasses = 'w-8 mr-4 p-2 variant-glass rounded-full'
 </script>
 
-<div class="grid grid-cols-2 gap-8">
-  <div class="">
-    {#each $contents as content, i}
-      {#if i > 0}
-        <hr />
-      {/if}
-      <div class="py-4">
-        <a class="clickable flex gap-4 items-center" href={paths.contents(content.slug)}>
-          {content.title}
-        </a>
-      </div>
-    {/each}
-  </div>
+<Shell2Cols>
+  <svelte:fragment slot="items">
+    {#each $contents as content}
+      <Item on:delete={() => contents.del(content.id)}>
+        <svelte:fragment slot="col1">
+          <Icons.DocumentTextMini class={targetIconClasses} />
+        </svelte:fragment>
 
-  <div class="variant-ghost p-4">
+        <svelte:fragment slot="col2">
+          <a class="clickable" href={paths.contents(content.slug)}>
+            {content.title}
+          </a>
+        </svelte:fragment>
+      </Item>
+    {/each}
+  </svelte:fragment>
+
+  <svelte:fragment slot="main">
     <slot />
-  </div>
-</div>
+  </svelte:fragment>
+</Shell2Cols>
