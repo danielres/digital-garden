@@ -24,7 +24,9 @@
       {person.name}
     </a>
 
-    <Markdown text={person.body} />
+    <div class="text-xs">
+      <Markdown text={person.body} plainText />
+    </div>
 
     <div class="text-sm grid grid-cols-[auto_2fr_1fr] gap-x-4 mt-2 items-center">
       {#each personTraits as trait}

@@ -50,7 +50,7 @@
       </a>
 
       <TraitLevels {trait} />
-      <Markdown text={trait.text} />
+      <Markdown text={trait.text} plainText />
     </svelte:fragment>
   </Item>
 {/if}

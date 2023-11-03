@@ -25,3 +25,30 @@ body {
 .clickable {
   @apply decoration-dotted underline underline-offset-4 decoration-surface-500;
 }
+
+.markdown {
+  @apply space-y-2 leading-snug;
+  ul,
+  ol {
+    @apply ml-4 list-outside !mb-2;
+  }
+  ul {
+    @apply list-disc;
+  }
+  ol {
+    @apply list-decimal;
+  }
+  a {
+    @apply underline;
+  }
+  h1 {
+    @apply text-xl font-normal;
+  }
+  h2 {
+    @apply text-lg font-normal;
+  }
+  h3 {
+    @apply text-base font-normal;
+  }
+  @apply text-sm;
+}
