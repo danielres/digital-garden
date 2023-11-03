@@ -1,6 +1,8 @@
 export { default as LinkExternal } from './ArrowTopRightOnSquare.svelte'
 export { default as BookmarkMini } from './BookmarkMini.svelte'
 export { default as ChatBubbleEllipsis } from './ChatBubbleOvalLeftElipsis.svelte'
+export { default as ChevronDown } from './ChevronDown.svelte'
+export { default as ChevronUp } from './ChevronUp.svelte'
 export { default as DocumentTextMini } from './DocumentTextMini.svelte'
 export { default as Link } from './Link.svelte'
 export { default as PaperClipMini } from './PaperClipMini.svelte'
