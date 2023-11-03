@@ -4,17 +4,15 @@
   import FormEditableDoc from '../../components/FormEditableDoc.svelte'
   import Markdown from '../../components/Markdown.svelte'
   import TraitItem from '../../components/TraitItem.svelte'
-  import TraitLevels from '../../components/TraitLevels.svelte'
   import { nestedify } from '../../utils/forms'
-  import { paths } from '../../utils/navigation'
   import FormFields from '../FormFields.svelte'
   import PersonHead from './PersonHead.svelte'
 
-  const { persons, traits, topics } = getAppContext()
+  const { persons, traits } = getAppContext()
 
-  $: personName = $page.params.personName
-  $: person = $persons.find((p) => p.name === personName)
-  $: personTraits = $traits.filter((t) => t.targetKind === 'person' && t.targetId === person?.id)
+  $: slug = $page.params.slug
+  $: person = $persons.find((p) => p.slug === slug)
+  $: personTraits = $traits.filter((t) => t.targetId === person?.id)
 
   const handleUpdate = (values: Record<string, string>) => {
     if (!person) return
@@ -47,6 +45,6 @@
   </FormEditableDoc>
 {:else}
   <div>
-    Person "{personName}" not found.
+    Person "{slug}" not found.
   </div>
 {/if}

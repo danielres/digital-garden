@@ -59,7 +59,7 @@
 
   <NodeTree on:copy={onCopy} on:move={onMove} on:newNode={onNewNode} on:delete={onDelete}>
     <span slot="nodeItem" let:data class="flex items-center gap-2">
-      <a class="flex items-center clickable" href={paths.topics(data?.node?.name)}>
+      <a class="flex items-center clickable" href={paths.topics(data?.node?.slug)}>
         {data?.node?.name}
       </a>
 

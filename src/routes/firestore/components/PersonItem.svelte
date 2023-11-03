@@ -20,7 +20,7 @@
   </svelte:fragment>
 
   <svelte:fragment slot="col2">
-    <a class="clickable flex gap-4 items-center" href={paths.persons(person.name)}>
+    <a class="clickable flex gap-4 items-center" href={paths.persons(person.slug)}>
       {person.name}
     </a>
 

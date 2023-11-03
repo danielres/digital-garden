@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getAppContext } from '../appContext'
-  import { sanitizeFormInput as sanitizeFormInput, slugify, upperFirst } from '../utils/string'
+  import { paths } from '../utils/navigation'
+  import { sanitizeFormInput, slugify, upperFirst } from '../utils/string'
 
   const { contents } = getAppContext()
   type FormOnSubmitEvent = Event & { currentTarget: EventTarget & HTMLFormElement }
@@ -48,7 +49,7 @@
       }}
     />
     <div class="ml-3 text-sm opacity-50 mt-1">
-      {#if slug}/contents/{slug}{/if}
+      {#if slug}{paths.contents(slug)}{/if}
       <input type="hidden" name="slug" bind:value={slug} />
     </div>
   </label>

@@ -10,8 +10,8 @@
 
   const { topics, traits } = getAppContext()
 
-  $: topicName = $page.params.topicName
-  $: topic = $topics.find((t) => t.name === topicName)
+  $: slug = $page.params.slug
+  $: topic = $topics.find((t) => t.slug === slug)
   $: topicTraits = $traits.filter((t) => t.topicId === topic?.id)
 
   const handleUpdate = (values: Partial<Topic>) => {
@@ -70,7 +70,7 @@
     </FormEditableDoc>
   {:else}
     <div>
-      Topic {topicName} not found.
+      Topic "{slug}" not found.
     </div>
   {/if}
 </div>

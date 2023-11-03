@@ -1,18 +1,37 @@
 <script lang="ts">
   import { getAppContext, type Person } from '../appContext'
   import { paths } from '../utils/navigation'
+  import { sanitizeFormInput, slugify, upperFirst } from '../utils/string'
 
   export let person: Pick<Person, 'body' | 'picture' | 'name'> & { id?: string }
 
   const { traits, topics } = getAppContext()
   $: personTraits = $traits.filter((t) => t.targetKind === 'person' && t.targetId === person?.id)
   $: isNew = !person.id
+
+  let slug = ''
 </script>
 
 {#if isNew}
   <label>
     <span>Name</span>
-    <input type="text" class="textarea" name="name" value={person.name ?? ''} />
+    <input
+      type="text"
+      class="textarea"
+      name="name"
+      value={person.name ?? ''}
+      on:input={(e) => {
+        e.currentTarget.value = upperFirst(e.currentTarget.value)
+        slug = slugify(e.currentTarget.value)
+      }}
+      on:change={(e) => {
+        e.currentTarget.value = sanitizeFormInput(e.currentTarget.value)
+      }}
+    />
+    <div class="ml-3 text-sm opacity-50 mt-1">
+      {#if slug}{paths.persons(slug)}{/if}
+      <input type="hidden" name="slug" bind:value={slug} />
+    </div>
   </label>
 {/if}
 

@@ -27,6 +27,7 @@ type DbRecord = {
 export type Topic = DbRecord & {
   text: string
   name: string
+  slug: string
 }
 
 export type Edge = DbRecord & {
