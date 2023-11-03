@@ -7,7 +7,6 @@ export function upperFirst(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-
 export function slugify(string: string) {
   return string
     .toLowerCase()
@@ -17,6 +16,12 @@ export function slugify(string: string) {
     .replace(/(^-|-$)+/g, '')
 }
 
-export function sanitizeFormInput(str: string){
- return upperFirst(str.replace(/\s+/g, ' ').trim())
+export function sanitizeFormInput(str: string) {
+  return upperFirst(str.replace(/\s+/g, ' ').trim())
+}
+
+export function stripHtml(html: string): string {
+  const tmp = document.createElement('DIV')
+  tmp.innerHTML = html
+  return tmp.textContent || tmp.innerText || ''
 }
