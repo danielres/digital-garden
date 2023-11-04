@@ -8,7 +8,7 @@
   initializeStores()
   setAppContext()
 
-  const { user, auth } = getAppContext()
+  const { user, auth, ui } = getAppContext()
   const { loading } = auth
 
   const tabs = [
@@ -29,6 +29,16 @@
   <div class="max-w-4xl mx-auto pt-8 space-y-4">
     {#if $user}
       <div class="flex justify-end gap-4">
+        <button
+          type="button"
+          class="button btn text-error-400"
+          class:variant-ghost-error={!$ui.editing.value}
+          class:variant-filled-error={$ui.editing.value}
+          on:click={() => ui.edit.toggle()}
+        >
+          {$ui.editing.value ? 'Done' : 'Edit'}
+        </button>
+
         <button type="button" class="button btn variant-ghost" on:click={() => auth.signOut()}>
           Logout
         </button>

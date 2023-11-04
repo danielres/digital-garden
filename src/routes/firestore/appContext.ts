@@ -176,6 +176,18 @@ function makeAppContext(basePath = 'default/collections') {
     },
   }
   const signin = () => signInWithPopup(auth, googleAuthprovider)
+  const ui = {
+    ...writable({ editing: { value: false } }),
+    edit: {
+      toggle() {
+        ui.update(($ui) => {
+          $ui.editing.value = !$ui.editing.value
+          return $ui
+        })
+      },
+    },
+  }
+
   return {
     user,
     persons,
@@ -185,5 +197,6 @@ function makeAppContext(basePath = 'default/collections') {
     contents,
     resources,
     auth: { ...auth, loading, signin },
+    ui,
   }
 }
