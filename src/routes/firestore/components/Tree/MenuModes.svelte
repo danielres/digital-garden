@@ -1,59 +1,23 @@
 <script lang="ts">
+  import { upperFirst } from '../../utils/string'
   import { getTreeContext } from './treeContext'
 
   const { mode } = getTreeContext()
+
+  const modes = ['move', 'copy', 'add', 'delete'] as const
 </script>
 
-<div class="flex gap-4">
-  <label>
-    <input
-      class="radio"
-      type="radio"
-      value={'view'}
-      on:click={() => ($mode = { type: 'view' })}
-      checked={$mode.type === 'view'}
-    />
-    <span>View</span>
-  </label>
-
-  <label>
-    <input
-      class="radio"
-      type="radio"
-      value={'move'}
-      on:click={() => ($mode = { type: 'move' })}
-      checked={$mode.type === 'move'}
-    />
-    <span>Move</span>
-  </label>
-
-  <label>
-    <input
-      class="radio"
-      type="radio"
-      on:click={() => ($mode = { type: 'copy' })}
-      checked={$mode.type === 'copy'}
-    />
-    <span>Copy</span>
-  </label>
-
-  <label>
-    <input
-      class="radio"
-      type="radio"
-      on:click={() => ($mode = { type: 'add' })}
-      checked={$mode.type.startsWith('add')}
-    />
-    <span>Add</span>
-  </label>
-
-  <label>
-    <input
-      class="radio"
-      type="radio"
-      on:click={() => ($mode = { type: 'delete' })}
-      checked={$mode.type.startsWith('delete')}
-    />
-    <span>Delete</span>
-  </label>
+<div class="font-bold text-error-300 w-fit flex gap-2">
+  {#each modes as type}
+    <button
+      class="btn btn-sm rounded"
+      class:variant-ghost-error={$mode.type !== type}
+      class:variant-filled-error={$mode.type === type}
+      class:hover:variant-filled-error={$mode.type === type}
+      type="button"
+      on:click={() => ($mode = { type })}
+    >
+      {upperFirst(type)}
+    </button>
+  {/each}
 </div>

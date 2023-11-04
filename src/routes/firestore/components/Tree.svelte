@@ -8,13 +8,11 @@
   import * as Icons from './Icons'
   import MenuModes from './Tree/MenuModes.svelte'
   import NodeTree from './Tree/NodeTree.svelte'
-  import { setTreeContext } from './Tree/treeContext'
+  import { getTreeContext, setTreeContext } from './Tree/treeContext'
 
   const toast = _toast(getToastStore())
 
-  const { topics, edges, traits } = getAppContext()
-
-
+  const { topics, edges, traits, ui } = getAppContext()
 
   const onCopy = (e: CustomEvent<{ id: Topic['id']; newParentId: Topic['id'] }>) => {
     const { id, newParentId } = e.detail
@@ -47,17 +45,22 @@
     topics.del(nodeId)
   }
 
-  setTreeContext()
-
   function getOccurences(topic: Topic) {
     if (!topic) return {}
     const topicTraits = $traits.filter((t) => t.topicId === topic.id)
     return countOccurrences(topicTraits.map((t) => t.targetKind))
   }
+
+  setTreeContext()
+  const { mode } = getTreeContext()
+
+  $: if (!$ui.editing.value) $mode.type = 'view'
 </script>
 
 <div class="space-y-4">
-  <MenuModes />
+  {#if $ui.editing.value}
+    <MenuModes />
+  {/if}
 
   <NodeTree on:copy={onCopy} on:move={onMove} on:newNode={onNewNode} on:delete={onDelete}>
     <span slot="nodeItem" let:data class="flex items-center gap-2">
