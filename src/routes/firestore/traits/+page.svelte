@@ -33,7 +33,7 @@
       <span>Person</span>
       <select name="targetId" class="select">
         {#each $persons as person}
-          <option value={person.id}>{person.name}</option>
+          <option value={person.id}>{person.label}</option>
         {/each}
       </select>
     </label>
@@ -46,7 +46,7 @@
       <span>Content</span>
       <select name="targetId" class="select">
         {#each $contents as content}
-          <option value={content.id}>{content.title}</option>
+          <option value={content.id}>{content.label}</option>
         {/each}
       </select>
     </label>

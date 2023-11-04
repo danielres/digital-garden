@@ -14,6 +14,8 @@
 
   const { topics, edges, traits } = getAppContext()
 
+
+
   const onCopy = (e: CustomEvent<{ id: Topic['id']; newParentId: Topic['id'] }>) => {
     const { id, newParentId } = e.detail
     const result = edges.add({ parentId: newParentId, childId: id })
@@ -22,7 +24,7 @@
       const topic = get(topics).find((t) => t.id === id)
       const parentTopic = get(topics).find((t) => t.id === newParentId)
       return toast(
-        `Topic <b>"${topic?.name}"</b> already appears under <b>"${parentTopic?.name}"</b>`
+        `Topic <b>"${topic?.label}"</b> already appears under <b>"${parentTopic?.label}"</b>`
       )
     }
   }
@@ -32,11 +34,11 @@
     topics.move({ id, newParentId })
   }
 
-  const onNewNode = async (e: CustomEvent<{ name: string; parentId: Topic['id'] }>) => {
-    const { name, parentId } = e.detail
-    const result = topics.add({ name, parentId })
+  const onNewNode = async (e: CustomEvent<{ label: string; parentId: Topic['id'] }>) => {
+    const { label, parentId } = e.detail
+    const result = topics.add({ label, parentId })
     if (!result.success && result.code === 'TOPIC_ALREADY_EXISTS') {
-      return toast(`Topic <b>"${name}"</b> already exists`)
+      return toast(`Topic <b>"${label}"</b> already exists`)
     }
   }
 

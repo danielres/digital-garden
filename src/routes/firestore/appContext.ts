@@ -13,6 +13,7 @@ import { getFirestore } from 'firebase/firestore'
 import { getContext, setContext } from 'svelte'
 import { get, readonly, writable } from 'svelte/store'
 import { makeCollectionStore } from './utils/makeCollectionStore'
+import { nestedify } from './utils/forms'
 
 const googleAuthprovider = new GoogleAuthProvider()
 
@@ -20,36 +21,39 @@ type AppContext = ReturnType<typeof makeAppContext>
 
 type DbRecord = {
   id: string
+  label: string
   createdAt: Timestamp
   updatedAt?: Timestamp
 }
 
 export type Topic = DbRecord & {
+  resourceType: 'topic'
   text: string
-  name: string
   slug: string
 }
 
 export type Edge = DbRecord & {
+  resourceType: 'edge'
   parentId: Topic['id']
   childId: Topic['id']
 }
 
 export type Person = DbRecord & {
-  name: string
+  resourceType: 'person'
   slug: string
-  body: string
+  text: string
   picture: string
 }
 
 export type Content = DbRecord & {
-  title: string
+  resourceType: 'content'
   slug: string
   text: string
   url: string
 }
 
 export type PersonTrait = DbRecord & {
+  resourceType: 'trait'
   targetKind: 'person'
   targetId: Person['id']
   topicId: Topic['id']
@@ -61,6 +65,7 @@ export type PersonTrait = DbRecord & {
 }
 
 export type ContentTrait = DbRecord & {
+  resourceType: 'trait'
   targetKind: 'content'
   targetId: Content['id']
   topicId: Topic['id']
@@ -91,10 +96,20 @@ export function getAppContext() {
 function makeAppContext(basePath = 'default/collections') {
   const loading = writable(true)
   if (browser) getRedirectResult(auth).then(() => loading.set(false))
-  const persons = makeCollectionStore<Person>(db, `${basePath}/persons`)
-  const contents = makeCollectionStore<Content>(db, `${basePath}/contents`)
+  const persons = makeCollectionStore<Person>(
+    db,
+    'person',
+    `${basePath}/persons`,
+    (data) => data.label
+  )
+  const contents = makeCollectionStore<Content>(
+    db,
+    'content',
+    `${basePath}/contents`,
+    (data) => data.label
+  )
 
-  const _edges = makeCollectionStore<Edge>(db, `${basePath}/edges`)
+  const _edges = makeCollectionStore<Edge>(db, 'edge', `${basePath}/edges`, (data) => data.id)
   const edges = {
     ..._edges,
     add({ parentId, childId }: { parentId: Topic['id']; childId: Topic['id'] }): Result {
@@ -104,7 +119,12 @@ function makeAppContext(basePath = 'default/collections') {
       return { success: true }
     },
   }
-  const _topics = makeCollectionStore<Topic>(db, `${basePath}/topics`)
+  const _topics = makeCollectionStore<Topic>(
+    db,
+    'topic',
+    `${basePath}/topics`,
+    (data) => data.label
+  )
   const topics = {
     ..._topics,
     del(id: Topic['id']) {
@@ -121,21 +141,49 @@ function makeAppContext(basePath = 'default/collections') {
       if (existingEdge) edges.del(edge.id)
       else edges.update(edge.id, { parentId: newParentId })
     },
-    add({ name, parentId }: { name: string; parentId: Topic['id'] }) {
-      const extistingTopic = get(_topics).find((t) => t.name === name)
+    add({ label, parentId }: { label: string; parentId: Topic['id'] }) {
+      const extistingTopic = get(_topics).find((t) => t.label === label)
       if (extistingTopic) return { success: false, code: 'TOPIC_ALREADY_EXISTS' }
-      _topics.add({ name }).then((ref) => edges.add({ parentId, childId: ref.id }))
+      _topics.add({ label }).then((ref) => edges.add({ parentId, childId: ref.id }))
       return { success: true }
     },
     getChildren(id: Topic['id']) {
       return get(edges).filter((e) => e.parentId === id)
     },
   }
-  const _traits = makeCollectionStore<Trait>(db, `${basePath}/traits`)
+  const _traits = makeCollectionStore<Trait>(db, 'trait', `${basePath}/traits`, (data) => data.id)
   const traits = {
     ..._traits,
+    findTarget(trait: Trait | undefined) {
+      if (!trait) return undefined
+      if (trait.targetKind === 'person') return get(persons).find((p) => p.id === trait.targetId)
+      if (trait.targetKind === 'content') return get(contents).find((c) => c.id === trait.targetId)
+      return undefined
+    },
   }
   const user = readonly(writable(auth?.currentUser ?? null, (set) => onAuthStateChanged(auth, set)))
+  const resources = {
+    update(resource: (Topic | Person | Content | Trait) & Record<string, string>) {
+      const { traits: traitsvalues, ...values } = nestedify(resource)
+
+      if (resource.resourceType === 'topic') topics.update(resource.id, values)
+      if (resource.resourceType === 'person') persons.update(resource.id, values)
+      if (resource.resourceType === 'content') contents.update(resource.id, values)
+      if (resource.resourceType === 'trait') traits.update(resource.id, values)
+
+      if (!traitsvalues) return
+      Object.entries(traitsvalues).forEach(([id, values]) => traits.update(id, values))
+    },
+  }
   const signin = () => signInWithPopup(auth, googleAuthprovider)
-  return { user, persons, topics, edges, traits, contents, auth: { ...auth, loading, signin } }
+  return {
+    user,
+    persons,
+    topics,
+    edges,
+    traits,
+    contents,
+    resources,
+    auth: { ...auth, loading, signin },
+  }
 }

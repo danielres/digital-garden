@@ -1,17 +1,19 @@
 <script lang="ts">
   import { getAppContext } from '../appContext'
-  import PersonItem from '../components/PersonItem.svelte'
-  import Shell2Cols from '../components/Shell2Cols.svelte'
+  import Item from '../components/Item.svelte'
+  import Layout2Cols from '../components/layouts/Layout2Cols.svelte'
 
   const { persons } = getAppContext()
 </script>
 
-<Shell2Cols>
+<Layout2Cols>
   <svelte:fragment slot="items">
-    {#each $persons as person}
-      <PersonItem {person} />
+    {#each $persons as item}
+      <Item {item} on:delete={() => persons.del(item.id)} />
     {/each}
   </svelte:fragment>
 
-  <svelte:fragment slot="main"><slot /></svelte:fragment>
-</Shell2Cols>
+  <svelte:fragment slot="main">
+    <slot />
+  </svelte:fragment>
+</Layout2Cols>

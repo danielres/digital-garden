@@ -1,4 +1,4 @@
-interface NestedObject {
+export type NestedObject = {
   [key: string]: string | number | NestedObject
 }
 
@@ -18,4 +18,11 @@ export function nestedify(obj: { [key: string]: string }, acc: NestedObject = {}
     }, currentObj)
     return currentObj
   }, acc)
+}
+
+export type FormOnSubmitEvent = Event & { currentTarget: EventTarget & HTMLFormElement }
+export type FormOnSubmit = (e: FormOnSubmitEvent) => void
+
+export function getFormOnSubmitEventValues(e: FormOnSubmitEvent) {
+  return Object.fromEntries(new FormData(e.currentTarget))
 }

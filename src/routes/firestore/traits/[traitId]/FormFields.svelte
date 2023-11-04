@@ -14,7 +14,7 @@
     <span>Topic</span>
     <select name="topicId" class="select">
       {#each $topics as topic}
-        <option value={topic.id}>{topic.name}</option>
+        <option value={topic.id}>{topic.label}</option>
       {/each}
     </select>
   </label>

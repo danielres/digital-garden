@@ -1,19 +1,19 @@
 <script lang="ts">
-  import Shell2Cols from './../components/Shell2Cols.svelte'
   import { getAppContext } from '../appContext'
-  import TraitItem from './../components/TraitItem.svelte'
+  import Item from '../components/Item.svelte'
+  import Layout2Cols from '../components/layouts/Layout2Cols.svelte'
 
   const { traits } = getAppContext()
 </script>
 
-<Shell2Cols>
+<Layout2Cols>
   <svelte:fragment slot="items">
     {#each $traits as trait}
-      <TraitItem {trait} from="trait" />
+      <Item item={trait} on:delete={() => traits.del(trait.id)} />
     {/each}
   </svelte:fragment>
 
   <svelte:fragment slot="main">
     <slot />
   </svelte:fragment>
-</Shell2Cols>
+</Layout2Cols>

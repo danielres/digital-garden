@@ -1,68 +1,22 @@
 <script lang="ts">
-  import FormFields from './FormFields.svelte'
   import { page } from '$app/stores'
-  import { Avatar } from '@skeletonlabs/skeleton'
   import { getAppContext } from '../../appContext'
-  import FormEditableDoc from '../../components/FormEditableDoc.svelte'
-  import Markdown from '../../components/Markdown.svelte'
-  import TraitLevels from '../../components/TraitLevels.svelte'
-  import { nestedify } from '../../utils/forms'
-  import { paths } from '../../utils/navigation'
-  import { truncate, upperFirst } from '../../utils/string'
-  import * as Icons from '../../components/Icons'
+  import Resource from '../../components/Resource.svelte'
 
-  const { persons, traits, topics, contents } = getAppContext()
+  const { traits, resources } = getAppContext()
 
   $: traitId = $page.params.traitId
-  $: trait = $traits.find((t) => t.id === traitId)
-  $: topic = $topics.find((t) => t.id === trait?.topicId)
+  $: resource = $traits.find((t) => t.id === traitId)
 
-  const handleUpdate = (values: Record<string, string>) => {
-    if (!trait) return
-    const v = nestedify(values)
-    traits.update(trait.id, values)
+  function onSubmit(e: CustomEvent) {
+    if (!resource) return
+    const { id, resourceType } = resource
+    resources.update({ id, resourceType, ...e.detail })
   }
 </script>
 
-{#if trait && topic}
-  <FormEditableDoc {handleUpdate}>
-    <svelte:fragment slot="title">
-      {#if trait.targetKind === 'person'}
-        {@const person = $persons.find((p) => p.id === trait?.targetId)}
-        {#if person}
-          <a href={paths.persons(person.name)} class="clickable inline-flex gap-2 items-center">
-            <Avatar src={person.picture} width="w-8" />
-            {person.name}
-          </a>
-        {/if}
-      {/if}
-
-      {#if trait.targetKind === 'content'}
-        {@const content = $contents.find((p) => p.id === trait?.targetId)}
-        {#if content}
-          <a href={paths.contents(content.slug)} class="clickable inline-flex gap-2 items-center">
-            <Icons.Link class="w-8 p-1 bg-primary-500 text-primary-900 rounded-sm" />
-            {truncate(content.title)}
-          </a>
-        {/if}
-      {/if}
-      -
-      <a href={paths.topics(topic.name)} class="clickable">{topic.name}</a>
-    </svelte:fragment>
-
-    <svelte:fragment slot="fields">
-      <FormFields text={trait.text} levels={trait.levels} {topic} />
-    </svelte:fragment>
-
-    <svelte:fragment slot="content">
-      <TraitLevels {trait} />
-      <Markdown text={trait.text} />
-    </svelte:fragment>
-
-    <svelte:fragment slot="buttonText">Update trait</svelte:fragment>
-  </FormEditableDoc>
+{#if resource}
+  <Resource {resource} on:submit={onSubmit} />
 {:else}
-  <div>
-    Trait "{traitId}" not found.
-  </div>
+  <div>Trait with id "{traitId}" not found.</div>
 {/if}
