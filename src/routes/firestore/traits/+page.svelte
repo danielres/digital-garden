@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getAppContext, type Trait } from '../appContext'
   import { nestedify } from '../utils/forms'
-  import FormFields from './[traitId]/FormFields.svelte'
+  import FormFields from './FormFields.svelte'
 
   const { persons, topics, traits, contents } = getAppContext()
   type FormOnSubmitEvent = Event & { currentTarget: EventTarget & HTMLFormElement }

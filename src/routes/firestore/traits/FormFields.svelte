@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getAppContext, type Topic, type Trait } from '../../appContext'
-  import { upperFirst } from '../../utils/string'
+  import { getAppContext, type Topic, type Trait } from '../appContext'
+  import { upperFirst } from '../utils/string'
   const { topics } = getAppContext()
 
   export let levels: Trait['levels']
