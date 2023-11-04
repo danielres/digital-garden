@@ -1,8 +1,8 @@
 <script lang="ts">
   import { getToastStore } from '@skeletonlabs/skeleton'
   import { get } from 'svelte/store'
-  import { countOccurrences } from '../../tagtree2/utils/array'
   import { getAppContext, type Topic } from '../appContext'
+  import { countOccurrences } from '../utils/array'
   import { paths } from '../utils/navigation'
   import { toast as _toast } from '../utils/toast'
   import * as Icons from './Icons'
