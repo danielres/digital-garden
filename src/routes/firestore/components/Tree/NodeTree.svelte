@@ -59,7 +59,7 @@
   </ul>
 {:else}
   {@const node = $nodes.find((n) => n.id === nodeId)}
-  {@const nodeValue = node?.name}
+  {@const nodeValue = node?.label}
 
   <li
     data-parent-id={parentId}
@@ -129,7 +129,7 @@
                 <form
                   on:submit|preventDefault={async () => {
                     if ($mode.type !== 'add.parentSelected') return
-                    dispatch('newNode', { name: $mode.inputText, parentId: $mode.parentId })
+                    dispatch('newNode', { label: $mode.inputText, parentId: $mode.parentId })
                     $mode = { type: 'add.parentSelected', parentId: nodeId, inputText: '' }
                     setRandomKey()
                   }}
