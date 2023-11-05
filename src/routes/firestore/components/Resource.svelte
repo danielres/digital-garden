@@ -1,7 +1,7 @@
 <script lang="ts">
   import { focusTrap } from '@skeletonlabs/skeleton'
   import { createEventDispatcher } from 'svelte'
-  import type { Content, Person, Topic, Trait } from '../appContext'
+  import { getAppContext, type Content, type Person, type Topic, type Trait } from '../appContext'
   import Markdown from '../components/Markdown.svelte'
   import { getFormOnSubmitEventValues, type FormOnSubmit } from '../utils/forms'
   import FormRowResourceLabelWithSlug from './FormRowResourceLabelWithSlug.svelte'
@@ -12,7 +12,11 @@
 
   export let resource: Person | Content | Topic | Trait
   export let isNew = false
-  export let isEditing = false
+
+  const { ui } = getAppContext()
+
+  $: isEditing = $ui.editing.value
+
   export let validate: (values: Record<string, any>) => boolean = () => true
 
   const dispatch = createEventDispatcher()
@@ -24,7 +28,7 @@
     const values = getFormOnSubmitEventValues(e)
     dispatch('submit', values)
     formEl.reset()
-    if (!isNew) isEditing = false
+    if (!isNew) ui.edit.end()
   }
 
   $: isValid = validate(resource)
@@ -51,7 +55,7 @@
     {/if}
 
     {#if 'picture' in resource}
-      {#if isEditing}
+      {#if isNew || isEditing}
         <label>
           <span>Picture url</span>
           <input type="text" class="textarea" name="picture" value={resource.picture ?? ''} />
@@ -60,11 +64,11 @@
     {/if}
 
     {#if 'url' in resource}
-      <FormRowResourceUrl {resource} {isEditing} />
+      <FormRowResourceUrl {resource} isEditing={isNew || isEditing} />
     {/if}
 
     {#if 'text' in resource}
-      {#if isEditing}
+      {#if isNew || isEditing}
         <label>
           <span>Description</span>
           <textarea class="textarea" name="text">{resource.text}</textarea>
@@ -75,25 +79,16 @@
     {/if}
 
     {#if 'levels' in resource}
-      <TraitLevels trait={resource} {isEditing} />
+      <TraitLevels trait={resource} bind:isEditing />
     {/if}
 
-    <ResourceTraitsItems {resource} {isEditing} />
+    <ResourceTraitsItems {resource} />
 
-    {#if isEditing}
-      <button disabled={!isValid} class="btn variant-ghost-primary rounded" type="submit">
+    {#if isNew || isEditing}
+      <button disabled={!isValid} class="btn variant-filled-error rounded" type="submit">
         {isNew ? 'Add new' : 'Update'}
         {resourceType}
       </button>
     {/if}
   </form>
-
-  {#if !isNew}
-    <button
-      class="justify-self-end self-start opacity-50 hover:opacity-80 text-sm"
-      on:click={() => (isEditing = !isEditing)}
-    >
-      {isEditing ? 'cancel' : 'edit'}
-    </button>
-  {/if}
 </div>
