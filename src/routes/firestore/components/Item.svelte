@@ -16,12 +16,11 @@
   const dispatch = createEventDispatcher()
 
   export let item: Content | Person | Trait
-  export let isEditing = false
 
-  const { traits, topics } = getAppContext()
+  const { traits, topics, ui } = getAppContext()
+  $: isEditing = $ui.editing.value
 
-  const itemTraitsForTopicsList = $traits.filter((t) => t.targetId === item.id)
-  // const targetIconClasses = 'w-8 mr-4 p-2 variant-glass rounded-full'
+  $: itemTraitsForTopicsList = $traits.filter((t) => t.targetId === item.id)
 </script>
 
 <div class={_class}>
@@ -34,7 +33,7 @@
       <div class="col2 space-y-1">
         {#if item.resourceType === 'trait'}
           <TraitItemLink trait={item} />
-          <TraitLevels trait={item} />
+          <TraitLevels trait={item} {isEditing} />
         {:else}
           <a class="clickable flex gap-4 items-center" href={paths.resource(item)}>{item.label}</a>
         {/if}
@@ -70,7 +69,9 @@
     </div>
   </div>
 
-  <div class="self-start justify-self-end">
-    <ButtonDelete on:click={() => dispatch('delete')} />
-  </div>
+  {#if isEditing}
+    <div class="self-start justify-self-end">
+      <ButtonDelete on:click={() => dispatch('delete', { item })} />
+    </div>
+  {/if}
 </div>
