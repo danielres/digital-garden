@@ -1,9 +1,10 @@
 <script lang="ts">
   import { Timestamp } from 'firebase/firestore'
-  import Resource from '../components/Resource.svelte'
   import { getAppContext } from '../appContext'
+  import Panel from '../components/Panel.svelte'
+  import Resource from '../components/Resource.svelte'
 
-  const { persons } = getAppContext()
+  const { persons, ui } = getAppContext()
 
   function makeNewResource() {
     return {
@@ -24,12 +25,15 @@
   }
 </script>
 
-<Resource
-  {resource}
-  isNew={true}
-  isEditing={true}
-  on:submit={({ detail }) => {
-    persons.add(detail)
-    resource = makeNewResource()
-  }}
-/>
+{#if $ui.editing.value}
+  <Panel isAdmin>
+    <Resource
+      {resource}
+      isNew={true}
+      on:submit={({ detail }) => {
+        persons.add(detail)
+        resource = makeNewResource()
+      }}
+    />
+  </Panel>
+{/if}

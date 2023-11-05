@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Timestamp } from 'firebase/firestore'
   import { getAppContext } from '../appContext'
+  import Panel from '../components/Panel.svelte'
   import Resource from '../components/Resource.svelte'
   import validate from '../utils/validate'
 
@@ -21,13 +22,14 @@
   let resource = makeNewResource()
 </script>
 
-<Resource
-  {resource}
-  isNew={true}
-  isEditing={true}
-  on:submit={({ detail }) => {
-    contents.add(detail)
-    resource = makeNewResource()
-  }}
-  validate={validate.content}
-/>
+<Panel isAdmin>
+  <Resource
+    {resource}
+    isNew={true}
+    on:submit={({ detail }) => {
+      contents.add(detail)
+      resource = makeNewResource()
+    }}
+    validate={validate.content}
+  />
+</Panel>

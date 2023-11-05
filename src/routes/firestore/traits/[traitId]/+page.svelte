@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { getAppContext } from '../../appContext'
+  import Panel from '../../components/Panel.svelte'
   import Resource from '../../components/Resource.svelte'
 
   const { traits, resources } = getAppContext()
@@ -15,8 +16,10 @@
   }
 </script>
 
-{#if resource}
-  <Resource {resource} on:submit={onSubmit} />
-{:else}
-  <div>Trait with id "{traitId}" not found.</div>
-{/if}
+<Panel>
+  {#if resource}
+    <Resource {resource} on:submit={onSubmit} />
+  {:else}
+    <div>Trait with id "{traitId}" not found.</div>
+  {/if}
+</Panel>

@@ -1,9 +1,10 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { getAppContext } from '../../appContext'
+  import Panel from '../../components/Panel.svelte'
   import Resource from './../../components/Resource.svelte'
 
-  const { topics, resources } = getAppContext()
+  const { topics, resources, ui } = getAppContext()
 
   $: slug = $page.params.slug
   $: resource = $topics.find((t) => t.slug === slug)
@@ -15,8 +16,10 @@
   }
 </script>
 
-{#if resource}
-  <Resource {resource} on:submit={onSubmit} />
-{:else}
-  <div>Topic "{slug}" not found.</div>
-{/if}
+<Panel isAdmin={$ui.editing.value}>
+  {#if resource}
+    <Resource {resource} on:submit={onSubmit} />
+  {:else}
+    <div>Topic "{slug}" not found.</div>
+  {/if}
+</Panel>

@@ -9,8 +9,6 @@
   </div>
 
   {#if hasSlotMain}
-    <div class="variant-ghost p-4 h-fit">
-      <slot name="main" />
-    </div>
+    <slot name="main" />
   {/if}
 </div>
