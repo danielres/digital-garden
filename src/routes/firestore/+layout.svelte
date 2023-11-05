@@ -36,7 +36,7 @@
           class:variant-filled-error={$ui.editing.value}
           on:click={() => ui.edit.toggle()}
         >
-          {$ui.editing.value ? 'Done' : 'Edit'}
+          {$ui.editing.value ? 'Done' : 'Admin'}
         </button>
 
         <button type="button" class="button btn variant-ghost" on:click={() => auth.signOut()}>
