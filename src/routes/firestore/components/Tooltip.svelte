@@ -17,7 +17,8 @@
   const toggle = () => (isOpen = !isOpen)
   const setAnchor = (el: HTMLElement) => (anchor = el as HTMLButtonElement)
 
-  function confirm(func: () => void) {
+  function confirm(func: () => void, el?: HTMLElement) {
+    if (el) setAnchor(el)
     functionToCall = func
     toggle()
   }

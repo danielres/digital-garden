@@ -38,14 +38,10 @@
 {#if resourceTraits.length}
   <div class="space-y-1">
     {#each resourceTraits.filter((t) => t.targetKind === itemsTabsCurrent) as trait, i (trait)}
-      <Tooltip let:setAnchor let:confirm>
+      <Tooltip let:confirm>
         <Item
           item={trait}
-          on:delete={(e) => {
-            const buttonEl = e.detail.event.currentTarget
-            setAnchor(buttonEl)
-            confirm(() => traits.del(trait.id))
-          }}
+          on:delete={(e) => confirm(() => traits.del(trait.id), e.detail.event.currentTarget)}
         />
 
         <svelte:fragment slot="description">
