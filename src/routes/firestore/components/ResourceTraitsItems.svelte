@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { type Topic, type Content, type Person, type Trait, getAppContext } from '../appContext'
+  import { getAppContext, type Content, type Person, type Topic, type Trait } from '../appContext'
   import { onlyUnique } from '../utils/array'
   import { upperFirst } from '../utils/string'
+  import Confirm from './Confirm.svelte'
   import Item from './Item.svelte'
 
   export let resource: Topic | Content | Person | Trait
-  export let isEditing = false
 
   const resourceType = resource.resourceType
   const { traits } = getAppContext()
@@ -35,8 +35,30 @@
   </div>
 {/if}
 
-<div class="space-y-2">
-  {#each resourceTraits.filter((t) => t.targetKind === itemsTabsCurrent) as trait (trait)}
-    <Item item={trait} {isEditing} />
-  {/each}
-</div>
+{#if resourceTraits.length}
+  <div class="space-y-1">
+    {#each resourceTraits.filter((t) => t.targetKind === itemsTabsCurrent) as trait (trait)}
+      <Confirm let:confirm>
+        <svelte:fragment slot="description">
+          {@const topic = traits.findTopic(trait)}
+          {@const target = traits.findTarget(trait)}
+
+          <div class="grid gap-4">
+            <div>Are you sure you want to remove this association?</div>
+
+            {#if topic && target}
+              <div class="grid grid-cols-2 justify-self-center -ml-2 gap-x-4">
+                <div class="text-right">Topic:</div>
+                <div class="font-bold">{topic.label}</div>
+                <div class="text-right">{upperFirst(target.resourceType)}:</div>
+                <div class="font-bold">{target.label}</div>
+              </div>
+            {/if}
+          </div>
+        </svelte:fragment>
+
+        <Item item={trait} on:delete={() => confirm(() => traits.del(trait.id))} />
+      </Confirm>
+    {/each}
+  </div>
+{/if}
