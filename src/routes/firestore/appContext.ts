@@ -160,6 +160,10 @@ function makeAppContext(basePath = 'default/collections') {
       if (trait.targetKind === 'content') return get(contents).find((c) => c.id === trait.targetId)
       return undefined
     },
+    findTopic(trait: Trait | undefined) {
+      if (!trait) return undefined
+      return get(topics).find((t) => t.id === trait.topicId)
+    },
   }
   const user = readonly(writable(auth?.currentUser ?? null, (set) => onAuthStateChanged(auth, set)))
   const resources = {
