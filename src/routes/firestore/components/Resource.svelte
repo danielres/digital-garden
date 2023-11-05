@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { focusTrap } from '@skeletonlabs/skeleton'
   import { createEventDispatcher } from 'svelte'
   import type { Content, Person, Topic, Trait } from '../appContext'
   import Markdown from '../components/Markdown.svelte'
@@ -31,6 +32,7 @@
 
 <div class="stack">
   <form
+    use:focusTrap={isNew || isEditing}
     class="grid gap-4"
     on:submit|preventDefault={onSubmit}
     on:input={(e) => {
