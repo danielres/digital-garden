@@ -189,6 +189,18 @@ function makeAppContext(basePath = 'default/collections') {
           return $ui
         })
       },
+      start() {
+        ui.update(($ui) => {
+          $ui.editing.value = true
+          return $ui
+        })
+      },
+      end() {
+        ui.update(($ui) => {
+          $ui.editing.value = false
+          return $ui
+        })
+      },
     },
   }
 
