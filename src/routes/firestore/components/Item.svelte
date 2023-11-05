@@ -10,7 +10,7 @@
   import TraitItemLink from './TraitItemLink.svelte'
   import TraitLevels from './TraitLevels.svelte'
 
-  let _class = 'variant-glass-surface px-3 py-4 stack'
+  let _class = 'variant-glass-surface px-3 py-3 stack rounded'
   export { _class as class }
 
   const dispatch = createEventDispatcher()
@@ -26,7 +26,7 @@
 
 <div class={_class}>
   <div>
-    <div class="grid grid-cols-[auto_1fr] gap-4">
+    <div class="grid grid-cols-[auto_1fr] gap-3">
       <div class="col1">
         <ResourceIcon resource={item} />
       </div>
