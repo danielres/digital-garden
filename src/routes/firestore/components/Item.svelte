@@ -71,7 +71,7 @@
 
   {#if isEditing}
     <div class="self-start justify-self-end">
-      <ButtonDelete on:click={() => dispatch('delete', { item })} />
+      <ButtonDelete on:click={(event) => dispatch('delete', { item, event })} />
     </div>
   {/if}
 </div>

@@ -2,8 +2,8 @@
   import { getAppContext, type Content, type Person, type Topic, type Trait } from '../appContext'
   import { onlyUnique } from '../utils/array'
   import { upperFirst } from '../utils/string'
-  import Confirm from './Confirm.svelte'
   import Item from './Item.svelte'
+  import Tooltip from './Tooltip.svelte'
 
   export let resource: Topic | Content | Person | Trait
 
@@ -37,8 +37,17 @@
 
 {#if resourceTraits.length}
   <div class="space-y-1">
-    {#each resourceTraits.filter((t) => t.targetKind === itemsTabsCurrent) as trait (trait)}
-      <Confirm let:confirm>
+    {#each resourceTraits.filter((t) => t.targetKind === itemsTabsCurrent) as trait, i (trait)}
+      <Tooltip let:setAnchor let:confirm>
+        <Item
+          item={trait}
+          on:delete={(e) => {
+            const buttonEl = e.detail.event.currentTarget
+            setAnchor(buttonEl)
+            confirm(() => traits.del(trait.id))
+          }}
+        />
+
         <svelte:fragment slot="description">
           {@const topic = traits.findTopic(trait)}
           {@const target = traits.findTarget(trait)}
@@ -56,9 +65,7 @@
             {/if}
           </div>
         </svelte:fragment>
-
-        <Item item={trait} on:delete={() => confirm(() => traits.del(trait.id))} />
-      </Confirm>
+      </Tooltip>
     {/each}
   </div>
 {/if}
