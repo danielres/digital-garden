@@ -1,9 +1,9 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom'
-  import { Tab, TabGroup, storePopup } from '@skeletonlabs/skeleton'
+  import { LightSwitch, Tab, TabGroup, storePopup } from '@skeletonlabs/skeleton'
   import '../app.postcss'
-  import { LightSwitch } from '@skeletonlabs/skeleton'
+  import ThemeSwitch from './ThemeSwitch.svelte'
 
   storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow })
   let tabSet: number = 0
@@ -31,8 +31,9 @@
       Firestore
     </Tab>
   </TabGroup>
-  <div class="place-self-center justify-self-end mr-4">
-    <LightSwitch />
+  <div class="place-self-center justify-self-end mr-4 flex gap-2">
+    <ThemeSwitch />
+    <LightSwitch width="w-12" height="h-6" />
   </div>
 </div>
 
