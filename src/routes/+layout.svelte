@@ -27,7 +27,10 @@
     <Tab bind:group={tabSet} name="tab10" value={10} on:click={() => goto('/sveltefire')}>
       Sveltefire
     </Tab>
-    <Tab bind:group={tabSet} name="tab11" value={11} on:click={() => goto('/firestore')}>
+    <Tab bind:group={tabSet} name="tab11" value={11} on:click={() => goto('/mandelbrot')}>
+      Mandelbrot
+    </Tab>
+    <Tab bind:group={tabSet} name="tab12" value={12} on:click={() => goto('/firestore')}>
       Firestore
     </Tab>
   </TabGroup>
