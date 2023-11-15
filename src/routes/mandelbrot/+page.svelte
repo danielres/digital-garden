@@ -54,8 +54,31 @@
   }
 </script>
 
-<div class="w-fit mx-auto my-24 grid justify-items-center">
-  <div>
+<div class="w-fit mx-auto grid justify-items-center gap-8">
+  <div class="card variant-soft p-4 w-full space-y-4 text-sm">
+    <h2>Simple Mandelbrot rendering example</h2>
+
+    <p>For a more advanced example:</p>
+
+    <ul class="list-disc ml-8">
+      <li>
+        <b>Github</b>
+        :
+        <a href="https://github.com/danielres/gardun-fractal-explorer" class="underline">
+          danielres/gardun-fractal-explorer
+        </a>
+      </li>
+      <li>
+        <b>Demo</b>
+        :
+        <a href="https://gardun-fractal-explorer.vercel.app/" class="underline">
+          Gardun Fractal Explorer
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="text-xs">
     X: <input type="range" min="-1" max="1" step="0.01" bind:value={translateX} />
     Y:
     <input type="range" min="-1" max="1" step="0.01" bind:value={translateY} />
