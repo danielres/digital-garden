@@ -9,8 +9,9 @@
   import ResourceIcon from './ResourceIcon.svelte'
   import TraitItemLink from './TraitItemLink.svelte'
   import TraitLevels from './TraitLevels.svelte'
+  import { twMerge } from 'tailwind-merge'
 
-  let _class = 'variant-glass-surface px-3 py-3 stack rounded'
+  let _class = ''
   export { _class as class }
 
   const dispatch = createEventDispatcher()
@@ -23,7 +24,7 @@
   $: itemTraitsForTopicsList = $traits.filter((t) => t.targetId === item.id)
 </script>
 
-<div class={_class}>
+<div class={twMerge('stack card variant-glass-surface p-4 rounded-sm', _class)}>
   <div>
     <div class="grid grid-cols-[auto_1fr] gap-3">
       <div class="col1">
@@ -75,3 +76,6 @@
     </div>
   {/if}
 </div>
+
+<style lang="postcss">
+</style>
