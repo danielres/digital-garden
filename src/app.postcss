@@ -8,6 +8,11 @@ body {
   @apply h-full overflow-auto;
 }
 
+:root [data-theme='wintry'] {
+  --theme-rounded-container: theme(borderRadius.md); /* large elements: cards,... */
+  --theme-rounded-base: theme(borderRadius.DEFAULT); /* small elements: buttons, ... */
+}
+
 /* rocket theme */
 @font-face {
   font-family: 'Space Grotesk';
