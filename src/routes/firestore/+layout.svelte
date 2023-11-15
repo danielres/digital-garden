@@ -56,7 +56,7 @@
     <div class="flex gap-2">
       {#each tabs as tab}
         <a
-          class="btn btn-sm rounded px-4 py-2 flex gap-1 items-center"
+          class="btn btn-sm px-4 py-2 flex gap-1 items-center"
           class:variant-ghost-primary={$page.url.pathname.startsWith(tab.url)}
           class:variant-ghost={!$page.url.pathname.startsWith(tab.url)}
           href={tab.url}
