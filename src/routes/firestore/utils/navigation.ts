@@ -19,4 +19,8 @@ export const paths = {
     if (resource.resourceType === 'person') return paths.persons(resource.slug)
     if (resource.resourceType === 'content') return paths.contents(resource.slug)
   },
+
+  components: () => {
+    return [BASE_PATH, 'components'].filter(Boolean).join('/')
+  },
 }

@@ -16,6 +16,7 @@
     { name: 'Persons', url: paths.persons(), icon: Icons.UserMini },
     { name: 'Contents', url: paths.contents(), icon: Icons.DocumentTextMini },
     { name: 'Traits', url: paths.traits(), icon: Icons.PaperClipMini },
+    { name: 'Components', url: paths.components(), icon: Icons.Cog6Tooth },
   ]
 </script>
 

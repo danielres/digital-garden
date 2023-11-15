@@ -181,7 +181,10 @@ function makeAppContext(basePath = 'default/collections') {
   }
   const signin = () => signInWithPopup(auth, googleAuthprovider)
   const ui = {
-    ...writable({ editing: { value: false } }),
+    ...writable({
+      editing: { value: false },
+      tooltip: { id: <string | null>null },
+    }),
     edit: {
       toggle() {
         ui.update(($ui) => {
