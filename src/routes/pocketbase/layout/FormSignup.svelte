@@ -1,9 +1,9 @@
 <script lang="ts">
   import { dev } from '$app/environment'
   import type { ClientResponseError } from 'pocketbase'
-  import { getAppContext } from './appContext'
-  import type { UserInsert, UserSelect } from './types'
-  import Card from './components/Card.svelte'
+  import { getAppContext } from '../appContext'
+  import type { UserInsert, UserSelect } from '../types'
+  import Card from '../components/Card.svelte'
 
   const app = getAppContext()
 
