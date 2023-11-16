@@ -9,8 +9,6 @@
   })
 </script>
 
-<pre>{JSON.stringify($app.user, null, 2)}</pre>
-
 {#await recordsPromise then records}
   <div class="space-y-2 w-fit">
     {#each records as record}
