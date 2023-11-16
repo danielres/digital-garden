@@ -18,7 +18,7 @@
 <div class="p-8 space-y-4 max-w-4xl mx-auto">
   {#if $app.user}
     <div class="grid grid-cols-[1fr_auto] gap-8 items-center">
-      <ul class="flex gap-4">
+      <ul class="flex gap-2">
         {#each Object.entries(paths) as [k, v]}
           <li>
             <a
