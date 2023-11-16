@@ -3,6 +3,7 @@
   import type { ClientResponseError } from 'pocketbase'
   import { getAppContext } from './appContext'
   import type { UserInsert, UserSelect } from './types'
+  import Card from './components/Card.svelte'
 
   const app = getAppContext()
 
@@ -56,9 +57,9 @@
     </label>
 
     {#if error}
-      <div class="card p-4 variant-glass-error text-error-700-200-token">
+      <Card variant="error">
         {error.message}
-      </div>
+      </Card>
     {/if}
 
     <button class="btn variant-soft">Sign up</button>

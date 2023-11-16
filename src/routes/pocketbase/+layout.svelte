@@ -3,6 +3,7 @@
   import FormSignIn from './FormSignIn.svelte'
   import FormSignup from './FormSignup.svelte'
   import { getAppContext, setAppContext } from './appContext'
+  import Card from './components/Card.svelte'
 
   setAppContext()
   const app = getAppContext()
@@ -20,7 +21,14 @@
   </div>
 
   {#if $app.user}
-    <slot />
+    {#if $app.user.verified}
+      <slot />
+    {:else}
+      <Card variant="error">
+        <h2>Hello {$app.user.username}!</h2>
+        <p>Please remember to verify your email address.</p>
+      </Card>
+    {/if}
   {:else}
     <div class="grid gap-4 justify-items-center">
       <ul class="flex gap-4">
