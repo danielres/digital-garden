@@ -22,6 +22,9 @@ dependencies:
   paper:
     specifier: ^0.12.17
     version: 0.12.17
+  pocketbase:
+    specifier: ^0.19.0
+    version: 0.19.0
   superpal:
     specifier: ^1.2.31
     version: 1.2.31
@@ -2601,6 +2604,10 @@ packages:
       mlly: 1.4.2
       pathe: 1.1.1
     dev: true
+
+  /pocketbase@0.19.0:
+    resolution: {integrity: sha512-bUVZfVdD17K8GnwbeDMZPEdREVg2YE0F8uHPDC0zer4VtwXUqoPCCeudTy3fhUE7pfuKnfpuPxeBSYsBY3AGIQ==}
+    dev: false
 
   /postcss-import@15.1.0(postcss@8.4.31):
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
