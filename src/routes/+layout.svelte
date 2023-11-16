@@ -29,7 +29,7 @@
 
 <div class="p-4">
   <nav class="grid grid-cols-[1fr_auto] items-center">
-    <ul class="flex text-xs">
+    <ul class="flex text-xs flex-wrap gap-y-2">
       {#each tabs as tab}
         <li>
           <a
