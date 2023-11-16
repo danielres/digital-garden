@@ -17,3 +17,7 @@ export type UserSelect = {
   username: string
   verified: boolean
 }
+
+export type UserCurrent = UserSelect & {
+  email: string
+}
