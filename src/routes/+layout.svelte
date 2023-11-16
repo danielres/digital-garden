@@ -21,6 +21,7 @@
     { text: 'Sveltefire', path: '/sveltefire' },
     { text: 'Mandelbrot', path: '/mandelbrot' },
     { text: 'Firestore', path: '/firestore' },
+    { text: 'Pocketbase', path: '/pocketbase' },
   ]
 
   $: currentPath = $page.url.pathname
