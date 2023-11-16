@@ -1,5 +1,6 @@
 export type UserInsert = {
   username: string
+  slug: string
   email: string
   password: string
   passwordConfirm: string
@@ -13,6 +14,7 @@ export type UserSelect = {
   emailVisibility: boolean
   id: string
   name: string
+  slug: string
   updated: Date
   username: string
   verified: boolean
