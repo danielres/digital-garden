@@ -4,5 +4,5 @@ const BASE_PATH = '/pocketbase'
 
 export const paths = {
   home: () => BASE_PATH,
-  users: (id?: UserSelect['id']) => [BASE_PATH, 'users', id].filter(Boolean).join('/'),
+  users: (slug?: UserSelect['slug']) => [BASE_PATH, 'users', slug].filter(Boolean).join('/'),
 }
