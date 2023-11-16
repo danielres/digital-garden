@@ -1,6 +1,7 @@
 import PocketBase, { type AuthModel } from 'pocketbase'
 import { getContext, setContext } from 'svelte'
 import { readable } from 'svelte/store'
+import { makeAuth } from './appContext/makeAuth'
 
 type AppContext = ReturnType<typeof setAppContext>
 
@@ -15,20 +16,8 @@ export function setAppContext(url = 'http://127.0.0.1:8090') {
 
   const appContext = {
     ...store,
-
-    auth: {
-      admin: {
-        async signin(email: string, password: string) {
-          await pb.admins.authWithPassword(email, password)
-
-          console.log(pb.authStore.isValid)
-          console.log(pb.authStore.token)
-          console.log(pb.authStore.model?.id)
-        },
-      },
-
-      signout: () => pb.authStore.clear(),
-    },
+    auth: makeAuth(pb),
+    pb,
   }
 
   setContext('appContext', appContext)
