@@ -1,9 +1,12 @@
 <script lang="ts">
-  import { Avatar } from '@skeletonlabs/skeleton'
   import FormSignIn from './FormSignIn.svelte'
   import FormSignup from './FormSignup.svelte'
   import { getAppContext, setAppContext } from './appContext'
+  import Avatar from './components/Avatar.svelte'
   import Card from './components/Card.svelte'
+  import HeadlessTooltip from './components/HeadlessTooltip.svelte'
+  import DialogConfirm from './components/dialogs/DialogConfirm.svelte'
+  import { renderDate } from './utils/date'
 
   setAppContext()
   const app = getAppContext()
@@ -13,12 +16,38 @@
 </script>
 
 <div class="p-8 space-y-8">
-  <div class="flex gap-4">
-    {#if $app.user}
-      <Avatar width="w-10" initials={$app.user.email} />
-      <button class="btn variant-soft" on:click={() => app.auth.signout()}>Sign out</button>
-    {/if}
-  </div>
+  {#if $app.user}
+    <div class="grid justify-items-end">
+      <HeadlessTooltip let:toggle placement="bottom">
+        <button on:click={toggle}>
+          <Avatar user={$app.user} />
+        </button>
+
+        <svelte:fragment slot="content">
+          <DialogConfirm confirmButtons={false}>
+            <Card bg={false}>
+              <div class="text-left grid gap-4">
+                <div>
+                  <h3>{$app.user.username}</h3>
+                  <div class="text-sm opacity-60">{$app.user.email}</div>
+                </div>
+
+                <dl class="grid grid-cols-[auto_1fr] gap-x-2 text-sm opacity-75">
+                  <dt>Joined:</dt>
+                  <dd>{renderDate(new Date($app.user.created))}</dd>
+
+                  <dt>Verified?</dt>
+                  <dd>{$app.user.verified ? 'yes' : 'no'}</dd>
+                </dl>
+
+                <button class="btn variant-soft" on:click={app.auth.signout}>Sign out</button>
+              </div>
+            </Card>
+          </DialogConfirm>
+        </svelte:fragment>
+      </HeadlessTooltip>
+    </div>
+  {/if}
 
   {#if $app.user}
     {#if $app.user.verified}
