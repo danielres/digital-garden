@@ -10,7 +10,8 @@
 
 <Avatar
   width="w-12"
-  border="border-2 border-surface-400-500-token"
+  border="border-2 border-surface-500-400-token"
   src="{app.pb.files.getUrl(user, user.avatar, { thumb: '64x0' })}}"
   initials={user.username}
+  shadow="shadow-md"
 />
