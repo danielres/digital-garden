@@ -1,6 +1,5 @@
 import type PocketBase from 'pocketbase'
 import type { Trait, UserSelect } from '../types'
-import { slugify } from '../utils/string'
 
 export type TraitWithTopic = {
   desc: string
