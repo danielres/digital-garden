@@ -18,8 +18,27 @@ export type UserSelect = {
   updated: Date
   username: string
   verified: boolean
+  desc: string
 }
 
 export type UserCurrent = UserSelect & {
   email: string
+}
+
+export type Trait = {
+  desc: string
+  level: number
+  kind: string
+  label: string
+  slug: string
+}
+
+export type TopicSelect = {
+  collectionId: '_pb_topics_'
+  collectionName: 'topics'
+  created: Date
+  id: string
+  label: string
+  slug: string
+  updated: Date
 }
