@@ -1,1 +1,1 @@
-<span class="opacity-75 text-sm"><slot /></span>
+<span class="opacity-50 text-sm"><slot /></span>
