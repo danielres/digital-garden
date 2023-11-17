@@ -2,8 +2,8 @@
   import { dev } from '$app/environment'
   import type { ClientResponseError } from 'pocketbase'
   import { getAppContext } from '../appContext'
-  import type { UserInsert } from '../types'
   import Card from '../components/Card.svelte'
+  import type { UserInsert } from '../types'
 
   const app = getAppContext()
 
@@ -13,8 +13,17 @@
     const formEl = e.currentTarget as HTMLFormElement
     const formData = new FormData(formEl)
     const entries = formData.entries()
-    const values = Object.fromEntries(entries) as UserInsert
-    app.auth.signin(values.email, values.password).catch((err) => (error = err))
+    const values = Object.fromEntries(entries) as unknown as {
+      email: UserInsert['email']
+      password: UserInsert['password']
+      asAdmin: boolean
+    }
+    const { asAdmin, ...rest } = values
+    if (asAdmin) {
+      app.auth.admin.signin(rest.email, rest.password).catch((err) => (error = err))
+    } else {
+      app.auth.signin(rest.email, rest.password).catch((err) => (error = err))
+    }
   }
 </script>
 
@@ -27,6 +36,11 @@
   <label>
     <span>Password</span>
     <input class="input" name="password" type="password" value={dev ? 'hellopocket' : ''} />
+  </label>
+
+  <label class="flex gap-2 items-center">
+    <input class="checkbox" type="checkbox" name="asAdmin" />
+    <span>As admin</span>
   </label>
 
   {#if error}
