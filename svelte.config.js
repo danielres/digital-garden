@@ -9,7 +9,12 @@ const config = {
   preprocess: [vitePreprocess()],
 
   vitePlugin: {
-    inspector: true,
+    inspector: {
+      toggleKeyCombo: 'meta-x',
+      holdMode: true,
+      showToggleButton: 'always',
+      toggleButtonPos: 'bottom-right',
+    },
   },
   kit: {
     // adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
