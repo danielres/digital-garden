@@ -9,7 +9,7 @@
 
 <dl class="grid grid-cols-3 items-baseline text-sm">
   <dt>
-    <a class="clickable" href={paths.topics(trait.slug)}>
+    <a class="clickable" href={paths[trait.collectionName](trait.slug)}>
       {trait.label}
     </a>
   </dt>

@@ -13,22 +13,40 @@
 
   setAppContext()
   const app = getAppContext()
+
+  const { home, ...restPaths } = paths
 </script>
 
 <div class="p-8 space-y-4 max-w-4xl mx-auto">
   {#if $app.user}
     <div class="grid grid-cols-[1fr_auto] gap-8 items-center">
       <ul class="flex gap-2">
-        {#each Object.entries(paths) as [k, v]}
+        <li>
+          <a
+            href={paths.home()}
+            class={twMerge(
+              'btn',
+              $page.url.pathname === paths.home()
+                ? 'variant-filled-primary'
+                : 'variant-soft-primary'
+            )}
+          >
+            Home
+          </a>
+        </li>
+
+        {#each Object.entries(restPaths) as [key, resolver]}
           <li>
             <a
-              href={v()}
+              href={resolver()}
               class={twMerge(
                 'btn',
-                $page.url.pathname === v() ? 'variant-filled-primary' : 'variant-soft-primary'
+                $page.url.pathname.startsWith(resolver())
+                  ? 'variant-filled-primary'
+                  : 'variant-soft-primary'
               )}
             >
-              {upperFirst(k)}
+              {upperFirst(key)}
             </a>
           </li>
         {/each}

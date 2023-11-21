@@ -31,6 +31,9 @@ export type Trait = {
   kind: string
   label: string
   slug: string
+  collectionName: 'topics' | 'users'
+  label: string
+  slug: string
 }
 
 export type TopicSelect = {
@@ -41,4 +44,5 @@ export type TopicSelect = {
   label: string
   slug: string
   updated: Date
+  desc: string
 }

@@ -1,5 +1,5 @@
 import type PocketBase from 'pocketbase'
-import type { Trait, UserSelect } from '../types'
+import type { TopicSelect, Trait, UserSelect } from '../types'
 
 export type TraitWithTopic = {
   desc: string
@@ -27,8 +27,32 @@ export function makeQueries(pb: PocketBase) {
               kind,
               label: expand.topic.label,
               slug: expand.topic.slug,
+              collectionName: 'topics' satisfies TopicSelect['collectionName'],
             }))
           ),
+    },
+
+    topics: {
+      bySlug: (slug: TopicSelect['slug']): Promise<TopicSelect> =>
+        pb.collection('topics').getFirstListItem(`slug="${slug}"`, {}),
+
+      traits: ({ id }: { id: TopicSelect['id'] }) => {
+        const userTraitsPromise = pb
+          .collection('usersTraits')
+          .getFullList({ filter: pb.filter('topic={:id}', { id }), expand: 'item' })
+          .then((traits) => ({
+            users: traits.map(({ desc, level, kind, expand }) => ({
+              desc,
+              level,
+              kind,
+              label: expand?.item.username,
+              slug: expand?.item.slug,
+              collectionName: 'users' satisfies UserSelect['collectionName'],
+            })),
+          }))
+
+        return userTraitsPromise
+      },
     },
 
     user: {
