@@ -4,6 +4,7 @@
   import { LightSwitch, storePopup } from '@skeletonlabs/skeleton'
   import '../app.postcss'
   import ThemeSwitch from './ThemeSwitch.svelte'
+  import { twMerge } from 'tailwind-merge'
 
   storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow })
   let tabSet: number = 0
@@ -25,6 +26,7 @@
   ]
 
   $: currentPath = $page.url.pathname
+  $: pathHasSegments = currentPath.split('/').length > 2
 </script>
 
 <div class="p-4">
@@ -33,9 +35,12 @@
       {#each tabs as tab}
         <li>
           <a
-            class={`px-2 py-1 opacity-60 hover:opacity-100 transition-opacity ${
-              currentPath.startsWith(tab.path) ? 'variant-glass-primary opacity-100' : ''
-            }`}
+            class={twMerge(
+              'px-2 py-1 opacity-60 hover:opacity-100 transition-opacity',
+              ((pathHasSegments && currentPath.startsWith(tab.path)) ||
+                (!pathHasSegments && currentPath === tab.path)) &&
+                'variant-glass-primary opacity-100'
+            )}
             href={tab.path}
           >
             {tab.text}
