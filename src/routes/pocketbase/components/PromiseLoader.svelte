@@ -1,8 +1,7 @@
-<script lang="ts">
+<script lang="ts" generics="T">
   import Card from './Card.svelte'
   import Spinner from './Spinner.svelte'
 
-  type T = $$Generic
   export let promise: Promise<T>
   export let error = 'Resource not found'
 </script>
