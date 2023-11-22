@@ -1,57 +1,72 @@
 import type PocketBase from 'pocketbase'
-import type { TopicSelect, Trait, UserSelect } from '../types'
-
-export type TraitWithTopic = {
-  desc: string
-  level: number
-  kind: string
-  expand: {
-    topic: {
-      label: string
-      slug: string
-    }
-  }
-}
+import { groupBy } from 'ramda'
+import type {
+  CollectionName,
+  TopicSelect,
+  TraitGeneric,
+  TraitExpandedWithTopic,
+  UserSelect,
+} from '../types'
 
 export function makeQueries(pb: PocketBase) {
   return {
     item: {
-      traits: ({ id, collectionName }: { id: string; collectionName: 'users' }): Promise<Trait[]> =>
-        pb
-          .collection(collectionName + 'Traits')
-          .getFullList<TraitWithTopic>({ filter: pb.filter('item={:id}', { id }), expand: 'topic' })
-          .then((traits) =>
-            traits.map(({ desc, level, kind, expand }) => ({
-              desc,
-              level,
-              kind,
-              label: expand.topic.label,
-              slug: expand.topic.slug,
-              collectionName: 'topics' satisfies TopicSelect['collectionName'],
-            }))
-          ),
+      traits: async (itemId: string): Promise<TraitGeneric[]> => {
+        const expanded = await pb.collection('traits').getFullList<TraitExpandedWithTopic>({
+          filter: pb.filter('itemId={:itemId}', { itemId }),
+          expand: 'topic',
+          fields:
+            'id,desc,level,kind,expand.topic.slug,expand.topic.label,expand.topic.collectionName',
+        })
+
+        return expanded.map((expanded) => {
+          const { expand, ...rest } = expanded
+          return { ...rest, target: expand.topic }
+        })
+      },
     },
 
     topics: {
       bySlug: (slug: TopicSelect['slug']): Promise<TopicSelect> =>
         pb.collection('topics').getFirstListItem(`slug="${slug}"`, {}),
 
-      traits: ({ id }: { id: TopicSelect['id'] }) => {
-        const userTraitsPromise = pb
-          .collection('usersTraits')
-          .getFullList({ filter: pb.filter('topic={:id}', { id }), expand: 'item' })
-          .then((traits) => ({
-            users: traits.map(({ desc, level, kind, expand }) => ({
-              desc,
-              level,
-              kind,
-              label: expand?.item.username,
-              slug: expand?.item.slug,
-              collectionName: 'users' satisfies UserSelect['collectionName'],
-            })),
-          }))
+      traits: async (topicId: TopicSelect['id']) => {
+        const beforeJoin = (await pb.collection('traits').getFullList({
+          filter: pb.filter('topic={:topicId}', { topicId }),
+          fields: 'id,desc,kind,level,itemId,itemType',
+        })) as {
+          desc: string
+          itemId: string
+          itemType: 'users'
+          kind: string
+          level: string
+        }[]
 
-        return userTraitsPromise
+        const joined = beforeJoin.map(async (trait) => {
+          const { itemId, itemType, ...rest } = trait
+
+          const target = (await pb.collection(itemType).getFirstListItem(`id="${itemId}"`, {
+            fields: 'id,collectionName,avatar,username,slug,label',
+          })) as {
+            id: string
+            avatar?: string
+            username?: string
+            collectionName: CollectionName
+            slug: string
+          }
+
+          return {
+            ...rest,
+            target: {
+              ...target,
+              ...(target.username ? { label: target.username } : {}),
+            },
+          } as TraitGeneric
+        })
+
+        const resolved = (await Promise.all(joined)) satisfies TraitGeneric[]
+
+        return groupBy((t: TraitGeneric) => t.target.collectionName)(resolved)
       },
     },
 

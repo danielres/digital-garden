@@ -55,7 +55,7 @@
       <div class="justify-self-end">
         <HeadlessTooltip let:toggle placement="bottom">
           <button on:click={toggle}>
-            <Avatar user={$app.user} />
+            <Avatar record={$app.user} border md />
           </button>
 
           <svelte:fragment slot="content" let:close>
