@@ -158,9 +158,3 @@
     {/if}
   </div>
 </div>
-
-<style lang="postcss">
-  .arrow {
-    @apply border-t-2 border-r-2;
-  }
-</style>
