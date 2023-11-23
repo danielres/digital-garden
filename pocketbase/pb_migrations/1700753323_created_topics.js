@@ -2,8 +2,8 @@
 migrate((db) => {
   const collection = new Collection({
     "id": "or90yotn7n1zq5o",
-    "created": "2023-11-14 20:04:32.198Z",
-    "updated": "2023-11-14 20:04:32.198Z",
+    "created": "2023-11-23 15:28:43.550Z",
+    "updated": "2023-11-23 15:28:43.550Z",
     "name": "topics",
     "type": "base",
     "system": false,
@@ -33,11 +33,25 @@ migrate((db) => {
         "options": {
           "convertUrls": false
         }
+      },
+      {
+        "system": false,
+        "id": "870bmqf7",
+        "name": "slug",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": "[a-z0-9-]+"
+        }
       }
     ],
     "indexes": [],
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "@request.auth.verified = true",
+    "viewRule": "@request.auth.verified = true",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,

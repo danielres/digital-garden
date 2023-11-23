@@ -2,8 +2,8 @@
 migrate((db) => {
   const collection = new Collection({
     "id": "akbebc2i031o0fk",
-    "created": "2023-11-22 14:25:37.722Z",
-    "updated": "2023-11-22 14:25:37.722Z",
+    "created": "2023-11-23 15:28:43.551Z",
+    "updated": "2023-11-23 15:28:43.551Z",
     "name": "traits",
     "type": "base",
     "system": false,
@@ -102,8 +102,8 @@ migrate((db) => {
       }
     ],
     "indexes": [],
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "@request.auth.verified = true",
+    "viewRule": "@request.auth.verified = true",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
