@@ -1,32 +1,20 @@
 import type PocketBase from 'pocketbase'
-import { groupBy } from 'ramda'
-import {
-  isUserSelect,
-  type TopicSelect,
-  type TraitExpandedWithTopic,
-  type TraitGeneric,
-  type TraitItemSelect,
-  type TraitSelect,
-  type UserNormalized,
-  type UserSelect,
-} from '../types.d'
+import type { TopicSelect, TraitGeneric, TraitSelect, UserNormalized, UserSelect } from '../types.d'
 import { normalizeUser } from '../utils/users'
 
 export function makeQueries(pb: PocketBase) {
   return {
     item: {
-      traits: async (itemId: string): Promise<TraitGeneric[]> => {
-        const expanded = await pb.collection('traits').getFullList<TraitExpandedWithTopic>({
-          filter: pb.filter('itemId={:itemId}', { itemId }),
+      traits: async (source: UserNormalized): Promise<TraitGeneric[]> => {
+        const expanded = await pb.collection<TraitSelect>('traits').getFullList({
+          filter: pb.filter('user={:itemId}', { itemId: source.id }),
           expand: 'topic',
-          fields:
-            'id,desc,level,kind,expand.topic.slug,expand.topic.label,expand.topic.collectionName',
         })
 
-        return expanded.map((expanded) => {
-          const { expand, ...rest } = expanded
-          return { ...rest, target: expand.topic }
-        })
+        return expanded.map(({ expand, ...rest }) => ({
+          ...rest,
+          target: expand!.topic,
+        })) as TraitGeneric[]
       },
     },
 
@@ -37,26 +25,16 @@ export function makeQueries(pb: PocketBase) {
       list: () => pb.collection<TopicSelect>('topics').getFullList({ sort: '-label' }),
 
       traits: async (topicId: TopicSelect['id']) => {
-        const beforeJoin = await pb.collection<TraitSelect>('traits').getFullList({
+        const traitsExpanded = await pb.collection<TraitSelect>('traits').getFullList({
           filter: pb.filter('topic={:topicId}', { topicId }),
+          expand: 'user',
         })
 
-        const joined = beforeJoin.map(async (trait) => {
-          const { itemId, itemType, ...rest } = trait
-
-          const target = (await pb.collection(itemType).getOne(`id="${itemId}"`, {
-            fields: 'id,collectionName,avatar,username,slug,label',
-          })) as TraitItemSelect
-
-          return {
-            ...rest,
-            target: isUserSelect(target) ? normalizeUser(target) : target,
-          } as TraitGeneric
-        })
-
-        const resolved = (await Promise.all(joined)) satisfies TraitGeneric[]
-
-        return groupBy((t: TraitGeneric) => t.target.collectionName)(resolved)
+        return traitsExpanded.map((trait) => {
+          const { expand, ...rest } = trait
+          if (expand!.user) return { ...rest, target: normalizeUser(expand!.user) }
+          else return { ...rest, target: Object.values(expand!)[0] }
+        }) as TraitGeneric[]
       },
     },
 

@@ -3,8 +3,6 @@
   import Card from '../components/Card.svelte'
   import PromiseLoader from '../components/PromiseLoader.svelte'
   import TopicListItem from '../components/TopicListItem.svelte'
-  import type { TopicSelect } from '../types'
-  import UserListItem from './../components/UserListItem.svelte'
 
   const app = getAppContext()
 

@@ -10,7 +10,7 @@
   export let user: UserNormalized
   const app = getAppContext()
 
-  $: traitsPromise = app.queries.item.traits(user.id)
+  $: traitsPromise = app.queries.item.traits(user)
 </script>
 
 <div class="grid grid-cols-[auto_1fr] gap-4 items-center">
@@ -26,11 +26,15 @@
 <hr />
 
 <PromiseLoader promise={traitsPromise} let:result={traits}>
-  <div class="space-y-1">
-    {#each traits as trait}
-      <TraitGeneric {trait} />
-    {:else}
-      <Muted>No associated topics</Muted>
-    {/each}
+  <div class="space-y-2">
+    <h3>Topics</h3>
+
+    <div class="space-y-1">
+      {#each traits as trait}
+        <TraitGeneric {trait} />
+      {:else}
+        <Muted>No associated topics</Muted>
+      {/each}
+    </div>
   </div>
 </PromiseLoader>

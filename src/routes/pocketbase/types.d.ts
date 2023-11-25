@@ -1,8 +1,11 @@
 export function isUserSelect(item: TraitItemSelect): item is UserSelect {
   return item.collectionName === 'users'
 }
+export const traitTargetCollectionNames = ['users', 'topics'] as const
+export const collectionNames = [...traitTargetCollectionNames, 'traits'] as const
 
-export type CollectionName = 'topics' | 'users'
+export type TraitTargetCollectionName = (typeof traitTargetCollectionNames)[number]
+export type CollectionName = (typeof collectionNames)[number]
 
 export type UserInsert = {
   username: string
@@ -55,11 +58,12 @@ export type TraitSelect = {
   created: Date
   updated: Date
   itemId: string
-  itemType: CollectionName
+  itemType: TraitTargetCollectionName
   desc: string
   level: '0' | '1' | '2' | '3' | '4' | '5'
   kind: string
   topic: TopicSelect['id']
+  expand?: { user?: UserSelect; topic?: TopicSelect }
 }
 
 export type TraitItemSelect = Pick<
@@ -87,11 +91,5 @@ export type TraitGeneric = {
   desc: string
   level: string
   kind: string
-  target: {
-    id: string
-    collectionName: CollectionName
-    slug: string
-    label: string
-    image?: string
-  }
+  target: UserNormalized | TopicSelect
 }

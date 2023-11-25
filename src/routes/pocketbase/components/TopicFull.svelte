@@ -1,9 +1,8 @@
 <script lang="ts">
   import { getAppContext } from '../appContext'
-  import type { TopicSelect } from '../types'
+  import { traitTargetCollectionNames, type TopicSelect } from '../types.d'
   import { upperFirst } from '../utils/string'
   import Desc from './Desc.svelte'
-  import Muted from './Muted.svelte'
   import PromiseLoader from './PromiseLoader.svelte'
   import TraitGeneric from './TraitGeneric.svelte'
 
@@ -22,14 +21,12 @@
 
   <div class="space-y-2">
     <PromiseLoader promise={topicTraitsPromise} let:result={topicTraits}>
-      {#each Object.entries(topicTraits) as [collectionName, traits]}
-        <h3>{upperFirst(collectionName)}</h3>
+      {#each traitTargetCollectionNames.filter((n) => n !== 'topics') as targetCollectionName}
+        <h3>{upperFirst(targetCollectionName)}</h3>
 
         <div class="space-y-2">
-          {#each traits as trait}
+          {#each topicTraits.filter(({ target }) => target.collectionName === targetCollectionName) as trait}
             <TraitGeneric {trait} />
-          {:else}
-            <Muted>No associated {collectionName}</Muted>
           {/each}
         </div>
       {/each}
