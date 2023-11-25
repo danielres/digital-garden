@@ -15,7 +15,7 @@
   <dt class={twMerge(isUser && 'grid grid-cols-[auto_1fr] gap-3 items-center')}>
     {#if isUser}
       <div class="self-center">
-        <Avatar record={trait.target} sm />
+        <Avatar item={trait.target} sm />
       </div>
     {/if}
     <a class="clickable" href={paths[trait.target.collectionName](trait.target.slug)}>

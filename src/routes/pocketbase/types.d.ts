@@ -1,3 +1,7 @@
+export function isUserSelect(item: TraitItemSelect): item is UserSelect {
+  return item.collectionName === 'users'
+}
+
 export type CollectionName = 'topics' | 'users'
 
 export type UserInsert = {
@@ -23,6 +27,12 @@ export type UserSelect = {
   desc: string
 }
 
+export type UserNormalized = Omit<UserSelect, 'username' | 'avatar'> & {
+  label: UserSelect['username']
+  image: UserSelect['avatar']
+  email?: UserCurrent['email']
+}
+
 export type UserCurrent = UserSelect & {
   email: string
 }
@@ -37,6 +47,25 @@ export type TopicSelect = {
   updated: Date
   desc: string
 }
+
+export type TraitSelect = {
+  id: string
+  collectionId: string
+  collectionName: 'traits'
+  created: Date
+  updated: Date
+  itemId: string
+  itemType: CollectionName
+  desc: string
+  level: '0' | '1' | '2' | '3' | '4' | '5'
+  kind: string
+  topic: TopicSelect['id']
+}
+
+export type TraitItemSelect = Pick<
+  UserSelect,
+  'id' | 'collectionName' | 'avatar' | 'username' | 'slug'
+>
 
 export type TraitExpandedWithTopic = {
   id: string
@@ -62,8 +91,7 @@ export type TraitGeneric = {
     id: string
     collectionName: CollectionName
     slug: string
-    label?: string
-    avatar?: string
-    username?: string
+    label: string
+    image?: string
   }
 }

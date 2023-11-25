@@ -8,7 +8,7 @@
 
   const app = getAppContext()
 
-  const topicsPromise = app.pb.collection<TopicSelect>('topics').getFullList({ sort: '-label' })
+  const topicsPromise = app.queries.topics.list()
 </script>
 
 <div class="grid grid-cols-[1fr_2fr] gap-2">

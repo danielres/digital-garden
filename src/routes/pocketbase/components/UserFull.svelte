@@ -1,23 +1,23 @@
 <script lang="ts">
   import { getAppContext } from '../appContext'
-  import type { UserSelect } from '../types'
+  import type { UserNormalized } from '../types'
   import Avatar from './Avatar.svelte'
   import Desc from './Desc.svelte'
   import Muted from './Muted.svelte'
   import PromiseLoader from './PromiseLoader.svelte'
   import TraitGeneric from './TraitGeneric.svelte'
 
-  export let user: UserSelect
+  export let user: UserNormalized
   const app = getAppContext()
 
   $: traitsPromise = app.queries.item.traits(user.id)
 </script>
 
 <div class="grid grid-cols-[auto_1fr] gap-4 items-center">
-  <Avatar record={user} />
+  <Avatar item={user} />
 
   <div>
-    <h2>{user.username}</h2>
+    <h2>{user.label}</h2>
 
     <Desc text={user.desc} />
   </div>

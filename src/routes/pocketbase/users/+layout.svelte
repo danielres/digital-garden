@@ -7,7 +7,7 @@
 
   const app = getAppContext()
 
-  const usersPromise = app.pb.collection<UserSelect>('users').getFullList({ sort: '-created' })
+  const usersPromise = app.queries.users.list()
 </script>
 
 <div class="grid grid-cols-[1fr_2fr] gap-2">

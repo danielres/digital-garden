@@ -3,18 +3,23 @@ import { getContext, setContext } from 'svelte'
 import { readable, writable } from 'svelte/store'
 import { makeAuth } from './appContext/makeAuth'
 import { makeQueries } from './appContext/makeQueries'
-import type { UserCurrent } from './types'
+import type { UserCurrent, UserNormalized } from './types'
+import { normalizeUser } from './utils/users'
 
 type AppContext = ReturnType<typeof setAppContext>
 
 export function setAppContext(url = 'http://127.0.0.1:8090') {
   const pb: PocketBase = new PocketBase(url)
 
-  const store = readable<{ user: UserCurrent | null }>({ user: null }, (set) => {
-    set({ user: pb.authStore?.model as UserCurrent })
+  const store = readable<{ user?: UserNormalized }>({ user: undefined }, (set) => {
+    pb.authStore?.model
+      ? set({ user: normalizeUser(<UserCurrent>pb.authStore.model) })
+      : set({ user: undefined })
 
     const unsubscribe = pb.authStore.onChange(() =>
-      set({ user: pb.authStore?.model as UserCurrent })
+      pb.authStore?.model
+        ? set({ user: normalizeUser(<UserCurrent>pb.authStore.model) })
+        : set({ user: undefined })
     )
 
     return unsubscribe
@@ -26,9 +31,9 @@ export function setAppContext(url = 'http://127.0.0.1:8090') {
 
   const appContext = {
     ...store,
+    files: pb.files,
     auth: makeAuth(pb),
     queries: makeQueries(pb),
-    pb,
     ui,
   }
 

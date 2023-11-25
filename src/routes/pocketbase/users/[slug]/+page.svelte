@@ -7,7 +7,7 @@
   const app = getAppContext()
 
   $: slug = $page.params.slug
-  $: userPromise = app.queries.user.bySlug(slug)
+  $: userPromise = app.queries.users.bySlug(slug)
 </script>
 
 <div class="space-y-4">

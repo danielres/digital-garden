@@ -51,11 +51,10 @@
           </li>
         {/each}
       </ul>
-
       <div class="justify-self-end">
         <HeadlessTooltip let:toggle placement="bottom">
           <button on:click={toggle}>
-            <Avatar record={$app.user} border md />
+            <Avatar item={$app.user} border md />
           </button>
 
           <svelte:fragment slot="content" let:close>
@@ -63,7 +62,7 @@
               <Card bg={false}>
                 <div class="text-left grid gap-4">
                   <div>
-                    <h3>{$app.user.username}</h3>
+                    <h3>{$app.user.label}</h3>
                     <div class="text-sm opacity-60">{$app.user.email}</div>
                   </div>
 
@@ -99,7 +98,7 @@
     </div>
   {:else if $app.user}
     <Card variant="error">
-      <h2>Hello {$app.user.username}!</h2>
+      <h2>Hello {$app.user.label}!</h2>
       <p>Please remember to verify your email address.</p>
     </Card>
   {:else}
