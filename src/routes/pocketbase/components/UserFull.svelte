@@ -10,7 +10,7 @@
   export let user: UserNormalized
   const app = getAppContext()
 
-  $: traitsPromise = app.queries.item.traits(user)
+  $: traitsSourcePromise = app.queries.traitsSource(user)
 </script>
 
 <div class="grid grid-cols-[auto_1fr] gap-4 items-center">
@@ -25,7 +25,7 @@
 
 <hr />
 
-<PromiseLoader promise={traitsPromise} let:result={traits}>
+<PromiseLoader promise={traitsSourcePromise} let:result={{ traits }}>
   <div class="space-y-2">
     <h3>Topics</h3>
 

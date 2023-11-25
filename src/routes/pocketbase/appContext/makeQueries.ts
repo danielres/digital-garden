@@ -1,21 +1,24 @@
 import type PocketBase from 'pocketbase'
 import type { TopicSelect, TraitGeneric, TraitSelect, UserNormalized, UserSelect } from '../types.d'
 import { normalizeUser } from '../utils/users'
+import { inflect } from '../../firestore/utils/string'
 
 export function makeQueries(pb: PocketBase) {
   return {
-    item: {
-      traits: async (source: UserNormalized): Promise<TraitGeneric[]> => {
-        const expanded = await pb.collection<TraitSelect>('traits').getFullList({
-          filter: pb.filter('user={:itemId}', { itemId: source.id }),
-          expand: 'topic',
-        })
+    traitsSource: async (source: UserNormalized): Promise<{ traits: TraitGeneric[] }> => {
+      const sourceType = inflect.singularize(source.collectionName)
 
-        return expanded.map(({ expand, ...rest }) => ({
+      const expanded = await pb.collection<TraitSelect>('traits').getFullList({
+        filter: pb.filter(`${sourceType}={:sourceId}`, { sourceId: source.id }),
+        expand: 'topic',
+      })
+
+      return {
+        traits: expanded.map(({ expand, ...rest }) => ({
           ...rest,
           target: expand!.topic,
-        })) as TraitGeneric[]
-      },
+        })) as TraitGeneric[],
+      }
     },
 
     topics: {
