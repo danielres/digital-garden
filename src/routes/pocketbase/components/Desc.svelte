@@ -5,12 +5,16 @@
 
   export let text: string
   export let preview = false
+
+  let _class = ''
+  export { _class as class }
 </script>
 
 <div
   class={twMerge(
     'rounded-xs variant-soft opacity-80',
-    preview ? 'text-xs px-2 py-1' : 'text-sm space-y-2 p-4'
+    preview ? 'text-xs px-2 py-1' : 'text-sm space-y-2 p-4',
+    _class
   )}
 >
   {#if text}
