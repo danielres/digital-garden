@@ -1,6 +1,9 @@
-export function isUserSelect(item: TraitItemSelect): item is UserSelect {
-  return item.collectionName === 'users'
+import type { RecordModel } from 'pocketbase'
+
+export function isUserSelect(object: RecordModel): object is UserSelect {
+  return object.collectionName === 'users'
 }
+
 export const traitTargetCollectionNames = ['users', 'topics'] as const
 export const collectionNames = [...traitTargetCollectionNames, 'traits'] as const
 
@@ -51,31 +54,24 @@ export type TopicSelect = {
   desc: string
 }
 
+type TraitLevels = Record<string, number>
+
 export type TraitSelect = {
   id: string
   collectionId: string
   collectionName: 'traits'
   created: Date
   updated: Date
-  itemId: string
-  itemType: TraitTargetCollectionName
   desc: string
-  level: '0' | '1' | '2' | '3' | '4' | '5'
-  kind: string
+  levels: TraitLevels
   topic: TopicSelect['id']
   expand?: { user?: UserSelect; topic?: TopicSelect }
 }
 
-export type TraitItemSelect = Pick<
-  UserSelect,
-  'id' | 'collectionName' | 'avatar' | 'username' | 'slug'
->
-
 export type TraitExpandedWithTopic = {
   id: string
   desc: string
-  level: string
-  kind: string
+  levels: TraitLevels
   expand: {
     topic: {
       id: string
@@ -89,7 +85,6 @@ export type TraitExpandedWithTopic = {
 export type TraitGeneric = {
   id: string
   desc: string
-  level: string
-  kind: string
+  levels: TraitLevels
   target: UserNormalized | TopicSelect
 }
