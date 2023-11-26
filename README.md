@@ -1,38 +1,14 @@
-# create-svelte
+# @danielres/digital-garden 🌱
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A collection of various programming experiments and ideas in their nascent stages.
+It's a space for trial, error, drafts, fast iteration, deliberate practice, and wild messy code.
 
-## Creating a project
+## Structure
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Experiments: Housed in individual directories under `/src/route`.
+- Special Requirements: Some projects may need unique setups like databases or specific environments.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+Explore at your leisure.\
+Feel free to use any useful elements you find.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Ideas here may continue their life in dedicated repositories, some public, some private, if they prove valuable.
