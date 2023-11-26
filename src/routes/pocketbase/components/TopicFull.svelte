@@ -19,6 +19,8 @@
     <Desc text={topic.desc} />
   </div>
 
+  <hr />
+
   <div class="space-y-2">
     <PromiseLoader promise={topicTraitsPromise} let:result={topicTraits}>
       {#each traitTargetCollectionNames.filter((n) => n !== 'topics') as targetCollectionName}

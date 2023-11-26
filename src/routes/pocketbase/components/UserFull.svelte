@@ -13,28 +13,28 @@
   $: traitsSourcePromise = app.queries.traitsSource(user)
 </script>
 
-<div class="grid grid-cols-[auto_1fr] gap-4 items-center">
-  <Avatar item={user} />
+<div class="space-y-8">
+  <div class="grid grid-cols-[auto_1fr] gap-4">
+    <Avatar item={user} />
 
-  <div>
-    <h2>{user.label}</h2>
+    <div>
+      <h2>{user.label}</h2>
 
-    <Desc text={user.desc} />
+      <Desc text={user.desc} />
+    </div>
   </div>
-</div>
 
-<hr />
+  <hr />
 
-<PromiseLoader promise={traitsSourcePromise} let:result={{ traits }}>
   <div class="space-y-2">
-    <h3>Topics</h3>
+    <PromiseLoader promise={traitsSourcePromise} let:result={{ traits }}>
+      <h3>Topics</h3>
 
-    <div class="space-y-1">
       {#each traits as trait}
         <TraitGeneric {trait} />
       {:else}
         <Muted>No associated topics</Muted>
       {/each}
-    </div>
+    </PromiseLoader>
   </div>
-</PromiseLoader>
+</div>
